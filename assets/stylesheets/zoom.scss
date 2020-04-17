@@ -1,0 +1,39 @@
+table.default {
+  tbody {
+    tr {
+      td {
+        vertical-align: top;
+
+        div.join-meeting {
+          font-size: x-large;
+          margin: 10px;
+          padding: 5px;
+          text-align: center;
+          width: 100%;
+
+          a {
+            img {
+              vertical-align: middle;
+            }
+          }
+        }
+
+        &:last-child {
+          text-align: right;
+        }
+      }
+    }
+  }
+}
+
+form.default {
+  fieldset {
+    section {
+      div.info {
+        font-style: italic;
+        font-size: small;
+        margin-left: 15px;
+      }
+    }
+  }
+}

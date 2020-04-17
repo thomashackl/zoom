@@ -18,20 +18,24 @@ require_once(realpath(__DIR__ . '/../vendor/autoload.php'));
 
 class ZoomAPI {
 
-    private static $API_URL = 'https://api.zoom.us/v2/';
+    const API_URL = 'https://api.zoom.us/v2/';
+    // What timezone are Zoom timestamps in?
+    const ZOOM_TIMEZONE = 'UTC';
+    // What is our local timezone?
+    const LOCAL_TIMEZONE = 'Europe/Berlin';
     /*
      * License types
      */
-    public static $LICENSE_BASIC = 1;
-    public static $LICENSE_LICENSED = 2;
-    public static $LICENSE_ONPREM = 3;
+    const LICENSE_BASIC = 1;
+    const LICENSE_LICENSED = 2;
+    const LICENSE_ONPREM = 3;
     /*
      * Meeting types
      */
-    public static $MEETING_INSTANT = 1;
-    public static $MEETING_SCHEDULED = 2;
-    public static $MEETING_RECURRING_NO_FIXED_TIME = 3;
-    public static $MEETING_RECURRING_FIXED_TIME = 4;
+    const MEETING_INSTANT = 1;
+    const MEETING_SCHEDULED = 2;
+    const MEETING_RECURRING_NO_FIXED_TIME = 3;
+    const MEETING_RECURRING_FIXED_TIME = 4;
 
     /**
      * Gets a single user's data.
@@ -82,18 +86,30 @@ class ZoomAPI {
      * Gets a single meeting.
      *
      * @param long $meetingId the Zoom meeting ID
+     * @param bool $useCache use cached entry if available?
      * @return mixed
      * @throws Exception
      */
-    public static function getMeeting($meetingId)
+    public static function getMeeting($meetingId, $useCache = true)
     {
         $cache = StudipCacheFactory::getCache();
 
-        if ($meeting = $cache->read('zoom-meeting-' . $meetingId)) {
-            return json_decode($meeting);
+        if ($useCache && $meeting = $cache->read('zoom-meeting-' . $meetingId)) {
+            $meeting = json_decode($meeting);
+            // Convert start time to DateTime object for convenience.
+            $start_time = new DateTime($meeting->start_time, new DateTimeZone(self::ZOOM_TIMEZONE));
+            $start_time->setTimezone(new DateTimeZone(self::LOCAL_TIMEZONE));
+            $meeting->start_time = $start_time;
+
+            return $meeting;
         } else {
             $meeting = self::_call('meetings/' . $meetingId);
             $cache->write(json_encode($meeting), 'zoom-meeting-' . $meetingId, 10800);
+            // Convert start time to DateTime object for convenience.
+            $start_time = new DateTime($meeting->start_time, new DateTimeZone(self::ZOOM_TIMEZONE));
+            $start_time->setTimezone(new DateTimeZone(self::LOCAL_TIMEZONE));
+            $meeting->start_time = $start_time;
+
             return $meeting;
         }
     }
@@ -103,10 +119,10 @@ class ZoomAPI {
      * If an error occurs, an exception is thrown.
      * @param string $endpoint the API endpoint to call
      * @param array $query_args extra parameters which will be appended as GET parameters
-     * @param array $body extra parameters which will be set as request body
+     * @param mixed|null $body extra parameters which will be set as request body
      * @param string $method request method, GET, POST, PUT, PATCH, DELETE
      */
-    private static function _call($endpoint, $query_args = [], $body = [], $method = 'GET')
+    private static function _call($endpoint, $query_args = [], $body = null, $method = 'GET')
     {
         // Generate a valid JWT token.
         $payload = [
@@ -118,7 +134,7 @@ class ZoomAPI {
         $token = \Firebase\JWT\JWT::encode($payload, Config::get()->ZOOM_APISECRET);
 
         // Build API call URL.
-        $url = self::$API_URL . $endpoint;
+        $url = self::API_URL . $endpoint;
         // Parameters passed, generate GET query string.
         if (count($query_args) > 0) {
             array_walk($query_args, function (&$value, $index) {
@@ -145,7 +161,7 @@ class ZoomAPI {
             ],
         ]);
 
-        if ($method == 'POST' && count($body) > 0) {
+        if ($method == 'POST' && $body != null) {
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
         }
 

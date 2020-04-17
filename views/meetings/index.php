@@ -4,8 +4,7 @@
 <?php else : ?>
     <table class="default">
         <caption>
-            <?php echo sprintf(dngettext('zoom', 'Ein Zoom-Meeting zu dieser Veranstaltung',
-                '%u Zoom-Meetings zu dieser Veranstaltung', count($meetings)), count($meetings)) ?>
+            <?php echo sprintf(dgettext('zoom', 'Zoom-Meetings zu dieser Veranstaltung')) ?>
         </caption>
         <colgroup>
             <col>
@@ -24,10 +23,22 @@
         <tbody>
             <?php foreach ($meetings as $meeting) : ?>
                 <tr>
-                    <td><?php echo htmlReady($meeting->zoom_settings->topic) ?></td>
                     <td>
-                        <a href="<?php echo $controller->link_for('meetings/join', $meeting->id)?>" target="_blank">
-                            <?php echo Icon::create('link_extern')->asImg(20) ?>
+                        <?php echo htmlReady($meeting->zoom_settings->topic) ?>
+                        <div class="join-meeting">
+                            <a href="<?php echo $controller->link_for('meetings/join', $meeting->id) ?>" target="_blank">
+                                <?php echo Icon::create('door-enter')->asImg(48) ?>
+                                <?php echo dgettext('zoom', 'Teilnehmen') ?>
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="<?php echo $controller->link_for('meetings/edit', $meeting->id) ?>" data-dialog="size=auto">
+                            <?php echo Icon::create('edit') ?>
+                        </a>
+                        <a href="<?php echo $controller->link_for('meetings/delete', $meeting->id) ?>"
+                           data-confirm="<?php echo dgettext('zoom', 'Soll das Meeting wirklich gelöscht werden?') ?>">
+                            <?php echo Icon::create('trash') ?>
                         </a>
                     </td>
                 </tr>

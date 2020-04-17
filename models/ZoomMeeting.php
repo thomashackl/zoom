@@ -16,8 +16,7 @@
  * @property int meeting_id database column
  * @property string user_id database column
  * @property string course_id database column
- * @property string visible_from database column
- * @property string visible_until database column
+ * @property string type database column
  * @property long zoom_meeting_id database column
  * @property string mkdate database column
  * @property string chdate database column
@@ -44,26 +43,14 @@ class ZoomMeeting extends SimpleORMap
 
         $config['additional_fields']['zoom_settings'] = true;
 
-        $config['registered_callbacks']['before_store'][]     = 'cbDateTimeObject';
-        $config['registered_callbacks']['after_store'][]      = 'cbDateTimeObject';
-        $config['registered_callbacks']['after_initialize'][] = 'cbDateTimeObject';
+        $config['registered_callbacks']['after_initialize'][] = 'cbGetZoomSettings';
 
         parent::configure($config);
     }
 
     public function getZoom_Settings()
     {
-        $cache = StudipCacheFactory::getCache();
-
-        if ($settings = $cache->read('zoom-meeting-' . $this->id)) {
-            return $settings;
-        } else {
-            try {
-                return ZoomAPI::getMeeting($this->zoom_meeting_id);
-            } catch (Exception $e) {
-                return null;
-            }
-        }
+        return ZoomAPI::getMeeting($this->zoom_meeting_id);
     }
 
     public function setZoom_Settings($data)
@@ -97,10 +84,8 @@ class ZoomMeeting extends SimpleORMap
      */
     public function cbGetZoomSettings($type)
     {
-        if (in_array($type, ['after_initialize']) && !$this->isNew()) {
-            $log = fopen('/Users/thomashackl/Downloads/zoom.log', 'w');
-            fwrite($log, 'Initialize ZoomMeeting object.');
-            fclose($log);
+        if (in_array($type, ['after_initialize'])) {
+            $this->getZoom_Settings();
         }
     }
 
