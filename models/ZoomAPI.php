@@ -35,7 +35,7 @@ class ZoomAPI {
     const MEETING_INSTANT = 1;
     const MEETING_SCHEDULED = 2;
     const MEETING_RECURRING_NO_FIXED_TIME = 3;
-    const MEETING_RECURRING_FIXED_TIME = 4;
+    const MEETING_RECURRING_FIXED_TIME = 8;
 
     /**
      * Gets a single user's data.

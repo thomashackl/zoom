@@ -6,7 +6,7 @@
         </legend>
         <section>
             <input type="radio" name="create_type" value="coursedates" id="create-coursedates" checked>
-            <label for="create-single" class="undecorated">
+            <label for="create-coursedates" class="undecorated">
                 <?php echo dgettext('zoom', 'Meeting mit Veranstaltungsterminen verknüpfen') ?>
             </label>
             <div class="info">
@@ -17,7 +17,7 @@
         </section>
         <section>
             <input type="radio" name="create_type" value="manual" id="create-manual">
-            <label for="create-cycle" class="undecorated">
+            <label for="create-manual" class="undecorated">
                 <?php echo dgettext('zoom', 'Meeting mit manuellem Termin') ?>
             </label>
             <div class="info">
@@ -38,30 +38,6 @@
             <input type="text" name="topic" id="topic" size="75" maxlength="255"
                    value="<?php echo htmlReady($meeting->zoom_settings->topic) ?>">
         </section>
-        <?php if ($meeting->isNew() || $meeting->type == 'manual') : ?>
-            <section class="col-4 manual-time">
-                <label for="start-time">
-                    <?php echo dgettext('zoom', 'Beginn') ?>
-                </label>
-                <input type="text" name="start_time" id="start-time" data-datetime-picker
-                       value="<?php echo htmlReady($meeting->zoom_settings->start_time->format('d.m.Y H:i')) ?>">
-            </section>
-            <section class="col-2 manual-time">
-                <label for="duration">
-                    <?php echo dgettext('zoom', 'Dauer (in Minuten)') ?>
-                </label>
-                <input type="number" name="duration" id="duration" min="1"
-                       max="<?php echo $user->type === ZoomAPI::LICENSE_BASIC ? '40' : '720' ?>"
-                       value="<?php echo htmlReady($meeting->zoom_settings->duration) ?>">
-            </section>
-        <?php endif ?>
-        <section>
-            <label for="password">
-                <?php echo dgettext('zoom', 'Passwort') ?>
-            </label>
-            <input type="text" name="password" id="password" size="75" maxlength="10"
-                   value="<?php echo htmlReady($meeting->zoom_settings->password) ?>">
-        </section>
         <section>
             <label for="agenda">
                 <?php echo dgettext('zoom', 'Beschreibung') ?>
@@ -69,7 +45,55 @@
             <textarea name="agenda" id="agenda" cols="75" rows="3"
                       maxlength="2000"><?php echo htmlReady($meeting->zoom_settings->agenda) ?></textarea>
         </section>
+        <section>
+            <label for="password">
+                <?php echo dgettext('zoom', 'Passwort') ?>
+            </label>
+            <input type="text" name="password" id="password" size="75" maxlength="10"
+                   value="<?php echo htmlReady($meeting->zoom_settings->password) ?>">
+        </section>
     </fieldset>
+    <?php if ($meeting->isNew() || $meeting->type == 'manual') : ?>
+        <fieldset class="manual-time">
+            <legend>
+                <?php echo dgettext('zoom', 'Wann findet das Meeting statt?') ?>
+            </legend>
+            <section class="col-4">
+                <label for="start-time">
+                    <?php echo dgettext('zoom', 'Beginn') ?>
+                </label>
+                <input type="text" name="start_time" id="start-time" data-datetime-picker
+                       value="<?php echo htmlReady($meeting->zoom_settings->start_time->format('d.m.Y H:i')) ?>">
+            </section>
+            <section class="col-2">
+                <label for="duration">
+                    <?php echo dgettext('zoom', 'Dauer (in Minuten)') ?>
+                </label>
+                <input type="number" name="duration" id="duration" min="1"
+                       max="<?php echo $user->type === ZoomAPI::LICENSE_BASIC ? '40' : '720' ?>"
+                       value="<?php echo htmlReady($meeting->zoom_settings->duration) ?>">
+            </section>
+            <section>
+                <label for="once">
+                    <?php echo dgettext('zoom', 'Findet das Meeting wiederholt statt?') ?>
+                </label>
+                <section class="col-3">
+                    <input type="radio" name="recurring" value="0" id="once"
+                        <?php echo $meeting->zoom_settings->type == ZoomAPI::MEETING_SCHEDULED ? 'checked' : '' ?>>
+                    <label for="once" class="undecorated">
+                        <?php echo dgettext('zoom', 'Keine Wiederholung') ?>
+                    </label>
+                </section>
+                <section class="col-3">
+                    <input type="radio" name="recurring" value="1" id="recurring"
+                        <?php echo $meeting->zoom_settings->type == ZoomAPI::MEETING_RECURRING_FIXED_TIME ? 'checked' : '' ?>>
+                    <label for="recurring" class="undecorated">
+                        <?php echo dgettext('zoom', 'Wöchentlich') ?>
+                    </label>
+                </section>
+            </section>
+        </fieldset>
+    <?php endif ?>
     <fieldset>
         <legend>
             <?php echo dgettext('zoom', 'Zoom-Einstellungen') ?>
