@@ -66,7 +66,8 @@ class ZoomPlugin extends StudIPPlugin implements StandardPlugin {
             'summary' => dgettext('zoom', 'Anlegen und Verwalten von Zoom-Meetings'),
             'description' => dgettext('zoom', 'Legen Sie Zoom-Meetingräume an, terminieren und verwalten Sie diese, laden Sie Teilnehmende ein.'),
             'category' => _('Lehr- und Lernorganisation'),
-            'icon' => Icon::create('video', 'info')
+            'icon' => Icon::create('video', 'info'),
+            'screenshot' => 'assets/images/zoom-logo.png'
         ];
     }
 
