@@ -29,7 +29,11 @@ table.default {
 form.default {
   fieldset {
     section {
-      div.info {
+      span.not-available {
+        text-decoration: line-through;
+      }
+
+      div.info, div.nonexisting-user {
         font-style: italic;
         font-size: small;
         margin-left: 15px;

@@ -1,11 +1,11 @@
 <form class="default" action="<?php echo $controller->link_for('meetings/store') ?>" method="post">
-    <?php if ($meeting->isNew()) : ?>
     <fieldset>
         <legend>
             <?php echo dgettext('zoom', 'Wie soll das Meeting angelegt werden?') ?>
         </legend>
         <section>
-            <input type="radio" name="create_type" value="coursedates" id="create-coursedates" checked>
+            <input type="radio" name="create_type" value="coursedates" id="create-coursedates"
+                <?php echo $meeting->type == 'coursedates' ? 'checked' : '' ?>>
             <label for="create-coursedates" class="undecorated">
                 <?php echo dgettext('zoom', 'Meeting mit Veranstaltungsterminen verknüpfen') ?>
             </label>
@@ -16,17 +16,18 @@
             </div>
         </section>
         <section>
-            <input type="radio" name="create_type" value="manual" id="create-manual">
+            <input type="radio" name="create_type" value="manual" id="create-manual"
+                <?php echo $meeting->type == 'manual' ? 'checked' : '' ?>>
             <label for="create-manual" class="undecorated">
                 <?php echo dgettext('zoom', 'Meeting mit manuellem Termin') ?>
             </label>
             <div class="info">
                 <?php echo dgettext('zoom', 'Die Zeit, zu der das Meeting stattfindet, '.
-                    'kann hier angegeben werden und bleibt unverändlich, außer, sie wird manuell bearbeitet.') ?>
+                    'kann hier angegeben werden und bleibt unverändlich, außer, sie wird manuell bearbeitet. '.
+                    'Es kann auch ein wöchentlicher Wiederholungszyklus an mehreren Wochentagen eingestellt werden.') ?>
             </div>
         </section>
     </fieldset>
-    <?php endif ?>
     <fieldset>
         <legend>
             <?php echo dgettext('zoom', 'Grunddaten') ?>
@@ -79,21 +80,60 @@
                 </label>
                 <section class="col-3">
                     <input type="radio" name="recurring" value="0" id="once"
-                        <?php echo $meeting->zoom_settings->type == ZoomAPI::MEETING_SCHEDULED ? 'checked' : '' ?>>
+                        <?php echo $meeting->isNew() || $meeting->zoom_settings->type == ZoomAPI::MEETING_SCHEDULED ?
+                            'checked' : '' ?>>
                     <label for="once" class="undecorated">
                         <?php echo dgettext('zoom', 'Keine Wiederholung') ?>
                     </label>
                 </section>
                 <section class="col-3">
-                    <input type="radio" name="recurring" value="1" id="recurring"
-                        <?php echo $meeting->zoom_settings->type == ZoomAPI::MEETING_RECURRING_FIXED_TIME ? 'checked' : '' ?>>
-                    <label for="recurring" class="undecorated">
+                    <input type="radio" name="recurring" value="1" id="weekly"
+                        <?php echo $meeting->zoom_settings->type == ZoomAPI::MEETING_RECURRING_FIXED_TIME ?
+                            'checked' : '' ?>>
+                    <label for="weekly" class="undecorated">
                         <?php echo dgettext('zoom', 'Wöchentlich') ?>
                     </label>
                 </section>
             </section>
         </fieldset>
     <?php endif ?>
+        <?php if (count($otherLecturers) > 0) : ?>
+            <fieldset>
+                <legend>
+                    <?php echo dgettext('zoom', 'Weitere Personen mit Vollzugriff auf dieses Meeting (Co-Hosts)') ?>
+                </legend>
+                <section>
+                    <?php foreach ($otherLecturers as $lecturer) : ?>
+                        <div>
+                            <input type="checkbox" name="co_hosts[]" id="co-host-<?php echo $lecturer->user_id ?>"
+                                   value="<?php echo htmlReady($lecturer->user_id) ?>"
+                                <?php echo $possibleCoHosts[$lecturer->user_id] ? (
+                                        in_array($lecturer->user->email,
+                                            explode(',', $meeting->zoom_settings->settings->alternative_hosts)) ?
+                                            ' checked' : '') :
+                                    ' disabled' ?>>
+                            <label for="co-host-<?php echo $lecturer->user_id ?>" class="undecorated">
+                                <?php if (!$possibleCoHosts[$lecturer->user_id]) : ?>
+                                    <span class="not-available">
+                                <?php endif ?>
+                                <?php echo htmlReady($lecturer->getUserFullname()) ?>
+                                <?php if (!$possibleCoHosts[$lecturer->user_id]) : ?>
+                                    </span>
+                                <?php endif ?>
+                            </label>
+                        </div>
+                    <?php endforeach ?>
+                    <?php if ($unavailable > 0) : ?>
+                        <?php echo MessageBox::warning(sprintf(dgettext('zoom', 'Für eine(n) oder ' .
+                            'mehrere Lehrende dieser Veranstaltung existiert noch keine Kennung in Zoom, daher ' .
+                            'können diese Personen momentan nicht als Co-Host eingetragen werden. Bitten Sie die ' .
+                            'Personen, sich einmalig unter <a href="%1$s" target="_blank">%1$s</a> einzuloggen, ' .
+                            'damit die Kennung angelegt wird. Danach können Sie die Personen als Co-Host eintragen.'),
+                            Config::get()->ZOOM_LOGIN_URL)) ?>
+                    <?php endif ?>
+                </section>
+            </fieldset>
+        <?php endif ?>
     <fieldset>
         <legend>
             <?php echo dgettext('zoom', 'Zoom-Einstellungen') ?>
@@ -128,6 +168,9 @@
         </section>
     </fieldset>
     <footer data-dialog-button>
+        <?php if (!$meeting->isNew()) : ?>
+            <input type="hidden" name="meeting_id" value="<?php echo $meeting->id ?>">
+        <?php endif ?>
         <?= CSRFProtection::tokenTag() ?>
         <?= Studip\Button::createAccept(_('Speichern'), 'store') ?>
         <?= Studip\LinkButton::createCancel(_('Abbrechen'), $controller->link_for('meetings'),

@@ -46,16 +46,35 @@ class MeetingsController extends AuthenticatedController {
         Navigation::activateItem('/course/zoom/meetings');
         PageLayout::setTitle(Context::getHeaderLine() . ' - ' . dgettext('zoom', 'Meetings'));
 
-        $this->meetings = ZoomMeeting::findByCourse_id($this->course->id);
+        $this->meetings = array_filter(ZoomMeeting::findByCourse_id($this->course->id), function($meeting) {
+            if ($meeting->zoom_settings === 404) {
+                $meeting->delete();
+                return false;
+            } else {
+                return true;
+            }
+        });
 
         if ($GLOBALS['perm']->have_studip_perm('dozent', $this->course->id)) {
-            $sidebar = Sidebar::get();
-            $actions = new ActionsWidget();
-            $actions->addLink(dgettext('zoom', 'Meeting erstellen'),
-                $this->link_for('meetings/edit'),
-                Icon::create('add'))->asDialog('size="auto"');
-            $sidebar->addWidget($actions);
+            $me = ZoomAPI::getUser();
+            if ($me === 404) {
+                PageLayout::postWarning(
+                    sprintf(
+                        dgettext('zoom', 'Für Sie existiert noch keine Kennung in Zoom, '.
+                        'daher können Sie momentan kein Meeting anlegen. Bitte loggen Sie sich einmalig '.
+                        'unter <a href="%1$s" target="_blank">%1$s</a> ein, damit ihre Kennung angelegt wird. '.
+                        'Danach können Sie hier Meetings anlegen.'),
+                    Config::get()->ZOOM_LOGIN_URL));
+            } else {
+                $sidebar = Sidebar::get();
+                $actions = new ActionsWidget();
+                $actions->addLink(dgettext('zoom', 'Meeting erstellen'),
+                    $this->link_for('meetings/edit'),
+                    Icon::create('add'))->asDialog('size="auto"');
+                $sidebar->addWidget($actions);
+            }
         }
+
     }
 
     /**
@@ -69,8 +88,8 @@ class MeetingsController extends AuthenticatedController {
             throw new AccessDeniedException();
         }
 
-        $videos = Navigation::getItem('/course/zoom');
-        $videos->addSubNavigation('edit', new Navigation($id == 0 ?
+        $zoom = Navigation::getItem('/course/zoom');
+        $zoom->addSubNavigation('edit', new Navigation($id == 0 ?
             dgettext('zoom', 'Zoom-Meeting anlegen') :
             dgettext('zoom', 'Zoom-Meeting bearbeiten'),
             PluginEngine::getURL($this, [], 'meetings')));
@@ -78,12 +97,30 @@ class MeetingsController extends AuthenticatedController {
 
         $this->user = ZoomAPI::getUser();
 
+        $this->otherLecturers = SimpleCollection::createFromArray(
+            CourseMember::findBySQL(
+                "`Seminar_id` = :course AND `user_id` != :me AND `status` = 'dozent' ORDER BY `position`",
+                ['course' => $this->course->id, 'me' => $GLOBALS['user']->id]
+            )
+        );
+
+        $this->possibleCoHosts = count($this->otherLecturers) > 0 ?
+            ZoomAPI::usersExist($this->otherLecturers) :
+            [];
+
+        $this->unavailable = count(array_filter($this->possibleCoHosts, function($one) {
+            return $one == false;
+        }));
+
         if ($id != 0) {
             $this->meeting = ZoomMeeting::find($id);
+            $this->meeting->useCache = false;
         } else {
             $this->meeting = new ZoomMeeting();
+            $this->meeting->type = 'coursedates';
 
             $nextHour = new DateTime('now +1 hour', new DateTimeZone(ZoomAPI::LOCAL_TIMEZONE));
+            $nextHour->setTime($nextHour->format('H'), 0, 0);
 
             $settings = new StdClass();
             $settings->topic = $this->course->getFullname();
@@ -96,8 +133,10 @@ class MeetingsController extends AuthenticatedController {
             $settings->settings->participant_video = 0;
             $settings->settings->join_before_host = 0;
             $settings->settings->mute_upon_entry = 1;
+            $settings->settings->alternative_hosts = '';
             $this->meeting->zoom_settings = $settings;
         }
+
     }
 
     /**
@@ -127,9 +166,12 @@ class MeetingsController extends AuthenticatedController {
 
         $meeting->chdate = date('Y-m-d H:i:s');
 
+        // Create meeting according to course dates.
         if (Request::option('create_type') == 'coursedates') {
+            $meeting->type = 'coursedates';
+
             $nextDate = CourseDate::findOneBySQL(
-                "`range_id` = :course AND `date` >= :now",
+                "`range_id` = :course AND `date` >= :now ORDER BY `date` ASC",
                 ['course' => $this->course->id, 'now' => time()]
             );
             $startTime = new DateTime();
@@ -137,21 +179,45 @@ class MeetingsController extends AuthenticatedController {
             $duration = ($nextDate->end_time - $nextDate->date) / 60;
             $type = ZoomAPI::MEETING_SCHEDULED;
 
+        // Create meeting with manual date(s).
         } else {
+
+            $meeting->type = 'manual';
 
             $startTime = new DateTime(Request::get('start_time'));
             $duration = Request::int('duration');
-            $type = ZoomAPI::MEETING_SCHEDULED;
+
+            if (Request::int('recurring') == 0) {
+
+                $type = ZoomAPI::MEETING_SCHEDULED;
+
+            } else {
+
+                $type = ZoomAPI::MEETING_RECURRING_FIXED_TIME;
+
+                // Try to find the last date before lecture period end.
+                $semesterEnd = new DateTime();
+                $semesterEnd->setTimestamp($this->course->start_semester->vorles_ende);
+                $weekdays = ZoomAPI::getWeekdays();
+
+                $lastDate = new DateTime($semesterEnd->format('d.m.Y') .
+                    ' +1 day last ' . $weekdays[$startTime->format('w') + 1]['name_en']);
+
+                $startTimeZoom = $startTime;
+                $startTimeZoom->setTimezone(ZoomAPI::ZOOM_TIMEZONE);
+                $recurrence = [
+                    'type' => ZoomAPI::RECURRENCE_WEEKLY,
+                    'repeat_interval' => 1,
+                    'weekly_days' => $startTime->format('w') + 1,
+                    'end_date_time' => $lastDate->format('Y-m-d') .
+                        'T' . $startTimeZoom->format('H:i:s') . 'Z'
+                ];
+
+            }
 
         }
 
-        // Add other lecturers as co-hosts.
-        $otherLecturers = SimpleCollection::createFromArray(
-            CourseMember::findBySQL(
-                "`Seminar_id` = :course AND `user_id` != :me AND `status` = 'dozent'",
-                ['course' => $this->course->id, 'me' => $GLOBALS['user']->id]
-            )
-        )->pluck('email');
+        $zoomArray = Request::getArray('settings');
 
         $zoomSettings = [
             'type' => $type,
@@ -162,26 +228,39 @@ class MeetingsController extends AuthenticatedController {
             'password' => Request::get('password'),
             'agenda' => Request::get('agenda'),
             'settings' => [
-                'host_video' => Request::int('host_video') == 1 ? true : false,
-                'participant_video' => Request::int('participant_video') == 1 ? true : false,
-                'join_before_host' => Request::int('join_before_host') == 1 ? true : false,
-                'mute_upon_entry' => Request::int('mute_upon_entry') == 1 ? true : false,
-                'alternative_hosts' => implode(',', $otherLecturers)
+                'host_video' => $zoomArray['host_video'] == 1 ? true : false,
+                'participant_video' => $zoomArray['participant_video'] == 1 ? true : false,
+                'join_before_host' => $zoomArray['join_before_host'] == 1 ? true : false,
+                'mute_upon_entry' => $zoomArray['mute_upon_entry'] == 1 ? true : false
             ]
         ];
 
-        if (($id = Request::int('meeting_id', 0)) != 0) {
+        if ($cohosts = Request::getArray('co_hosts')) {
+            $users = SimpleCollection::createFromArray(User::findMany($cohosts))->pluck('email');
 
+            $zoomSettings['settings']['alternative_hosts'] = implode(',', $users);
         } else {
-
-            $zoomMeeting = ZoomAPI::createMeeting($GLOBALS['user']->email, $zoomSettings);
-
+            $zoomSettings['settings']['alternative_hosts'] = '';
         }
 
-        if ($zoomMeeting != null) {
+        if (Request::option('create_type') != 'coursedates') {
+            if (Request::int('recurring') != 0) {
+                $zoomSettings['recurrence'] = $recurrence;
+            } else {
+                $zoomSettings['recurrence'] = null;
+            }
+        }
+
+        if (!$meeting->isNew()) {
+            $zoomMeeting = ZoomAPI::updateMeeting($meeting->zoom_meeting_id, $zoomSettings);
+        } else {
+            $zoomMeeting = ZoomAPI::createMeeting($GLOBALS['user']->email, $zoomSettings);
+        }
+
+        if ($zoomMeeting != null && $zoomMeeting->id) {
             $meeting->zoom_meeting_id = $zoomMeeting->id;
 
-            if ($meeting->store()) {
+            if ($meeting->store() !== false) {
                 PageLayout::postSuccess(dgettext('zoom', 'Das Meeting wurde gespeichert.'));
             } else {
                 PageLayout::postError(dgettext('zoom', 'Das Meeting kann nicht gespeichert werden.'));
@@ -198,6 +277,33 @@ class MeetingsController extends AuthenticatedController {
     }
 
     /**
+     * Deletes a Zoom meeting.
+     *
+     * @param $id
+     */
+    public function delete_action($id)
+    {
+        if (!$GLOBALS['perm']->have_studip_perm('dozent', $this->course->id)) {
+            throw new AccessDeniedException();
+        }
+
+        $meeting = ZoomMeeting::find($id);
+        if (ZoomAPI::deleteMeeting($meeting->zoom_meeting_id) !== null) {
+
+            if ($meeting->delete()) {
+                PageLayout::postSuccess(dgettext('zoom', 'Das Meeting wurde gelöscht.'));
+            } else {
+                PageLayout::postError(dgettext('zoom', 'Das Meeting konnte nicht aus Stud.IP gelöscht werden.'));
+            }
+
+        } else {
+            PageLayout::postError(dgettext('zoom', 'Das Meeting konnte nicht in Zoom gelöscht werden.'));
+        }
+
+        $this->relocate('meetings');
+    }
+
+    /**
      * Joins the given meeting. The URL differs whether you are a (co-)host or a participant.
      *
      * @param int $id the Zoom meeting to join
@@ -205,12 +311,12 @@ class MeetingsController extends AuthenticatedController {
     public function join_action($id)
     {
         $meeting = ZoomMeeting::find($id);
-        if ($GLOBALS['perm']->have_studip_perm('dozent', $this->course->id) &&
-                !$GLOBALS['perm']->have_studip_perm('admin', $this->course->id)) {
+        if ($meeting->isHost($GLOBALS['user'])) {
             $this->relocate($meeting->zoom_settings->start_url);
         } else {
             $this->relocate($meeting->zoom_settings->join_url);
         }
+        $this->relocate('meetings');
     }
 
 }

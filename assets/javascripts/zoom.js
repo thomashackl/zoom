@@ -4,7 +4,9 @@
     STUDIP.Zoom = {
 
         init: function() {
-            $('.manual-time').hide()
+            if ($('#create-coursedates').is(':checked')) {
+                $('.manual-time').hide()
+            }
             $('#create-coursedates').on('click', function() {
                 $('.manual-time').hide()
             });

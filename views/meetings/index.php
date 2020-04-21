@@ -25,6 +25,8 @@
                 <tr>
                     <td>
                         <?php echo htmlReady($meeting->zoom_settings->topic) ?>
+                        <br>
+                        <?php echo sprintf(dgettext('zoom', 'Nächster Termin: %s'), htmlReady($meeting->zoom_settings->start_time->format('d.m.Y H:i'))) ?>
                         <div class="join-meeting">
                             <a href="<?php echo $controller->link_for('meetings/join', $meeting->id) ?>" target="_blank">
                                 <?php echo Icon::create('door-enter')->asImg(48) ?>

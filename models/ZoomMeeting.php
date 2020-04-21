@@ -26,6 +26,7 @@ class ZoomMeeting extends SimpleORMap
 {
 
     private $zoomData = null;
+    public $useCache = true;
 
     protected static function configure($config = [])
     {
@@ -43,50 +44,29 @@ class ZoomMeeting extends SimpleORMap
 
         $config['additional_fields']['zoom_settings'] = true;
 
-        $config['registered_callbacks']['after_initialize'][] = 'cbGetZoomSettings';
-
         parent::configure($config);
+    }
+
+    public function isHost($user)
+    {
+        $zoomUser = ZoomAPI::getUser($user->email);
+        $alternative = $this->zoom_settings->settings->alternative_hosts ?: [];
+        return ($zoomUser->id == $this->zoom_settings->host_id ||
+            in_array($user->email, explode(',', $alternative)));
     }
 
     public function getZoom_Settings()
     {
-        return ZoomAPI::getMeeting($this->zoom_meeting_id);
+        if ($this->zoomData == null) {
+            $this->zoomData = ZoomAPI::getMeeting($this->zoom_meeting_id, $this->useCache);
+        } else {
+            return $this->zoomData;
+        }
     }
 
     public function setZoom_Settings($data)
     {
-        $this->zoom_settings = $data;
-    }
-
-    /**
-     * Visibilities are stored as strings to database (YYYY-MM-DD HH:ii:ss).
-     * Internally, the model class uses DateTime objects for better handling.
-     *
-     * @param string $type the event
-     */
-    public function cbDateTimeObject($type)
-    {
-        foreach (words('visible_from visible_until') as $one) {
-            if ($type === 'before_store' && $this->$one != null) {
-                $this->$one = $this->$one->format('Y-m-d H:i:s');
-            }
-            if (in_array($type, ['after_initialize', 'after_store']) && $this->$one != null) {
-                $this->$one = new DateTime($this->$one);
-            }
-        }
-    }
-
-    /**
-     * Many meeting settings are not stored in Stud.IP as they can always be changed directly in Zoom.
-     * So on loading a ZoomMeeting object, we get those settings via Zoom API.
-     *
-     * @param string $type the event
-     */
-    public function cbGetZoomSettings($type)
-    {
-        if (in_array($type, ['after_initialize'])) {
-            $this->getZoom_Settings();
-        }
+        $this->zoomData = $data;
     }
 
 }

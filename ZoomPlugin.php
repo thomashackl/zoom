@@ -94,4 +94,16 @@ class ZoomPlugin extends StudIPPlugin implements StandardPlugin {
         $dispatcher->dispatch($unconsumed_path);
     }
 
+    public static function onEnable($pluginId) {
+        parent::onEnable($pluginId);
+        StudipAutoloader::addAutoloadPath(__DIR__);
+        ZoomMeetingDateCronjob::register()->schedulePeriodic(10)->activate();
+    }
+
+    public static function onDisable($pluginId) {
+        StudipAutoloader::addAutoloadPath(__DIR__);
+        ZoomMeetingDateCronjob::unregister();
+        parent::onDisable($pluginId);
+    }
+
 }

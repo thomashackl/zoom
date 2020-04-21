@@ -36,11 +36,17 @@ class ZoomAPI {
     const MEETING_SCHEDULED = 2;
     const MEETING_RECURRING_NO_FIXED_TIME = 3;
     const MEETING_RECURRING_FIXED_TIME = 8;
+    /**
+     * Recurrence types
+     */
+    const RECURRENCE_DAILY = 1;
+    const RECURRENCE_WEEKLY = 2;
+    const RECURRENCE_MONTHLY = 3;
 
     /**
      * Gets a single user's data.
      *
-     * @param string|null $userId Zoom users are identified by their E-Mail address
+     * @param User|null $userId the user to check
      * @return mixed
      * @throws Exception
      */
@@ -54,14 +60,52 @@ class ZoomAPI {
         if ($user = $cache->read('zoom-user-' . $userId)) {
             return json_decode($user);
         } else {
-            $user = self::_call('users/' . $userId);
+            $result = self::_call('users/' . $userId);
+
+            // User found, return data.
+            if ($result['statuscode'] == 200) {
+
+                $user = $result['response'];
+
+            // User not found, return a special code.
+            } else if ($result['statuscode'] == 404) {
+
+                return 404;
+
+            // Some other problem, return null.
+            } else {
+                $user = null;
+            }
 
             if ($user != null) {
-                $cache->write(json_encode($user), 'zoom-user-' . $userId, 86400);
+                $cache->write('zoom-user-' . $userId, json_encode($user), 86400);
             }
 
             return $user;
         }
+    }
+
+    public static function getUserPermissions($userId)
+    {
+        return self::_call('users/' . $userId . '/permissions');
+    }
+
+    /**
+     * Checks if the given userIds exist as Zoom users.
+     *
+     * @param array $userIds Stud.IP Users
+     * @return array Indicator who exists in Zoom and who doesn't ([$userId => true|false])
+     */
+    public function usersExist($users)
+    {
+        $existing = [];
+
+        foreach ($users as $one) {
+            $user = self::getUser($one->email);
+            $existing[$one->user_id] = ($user !== 404 && $user !== null);
+        }
+
+        return $existing;
     }
 
     /**
@@ -69,15 +113,50 @@ class ZoomAPI {
      *
      * @param string $userId settings for the new meeting
      * @param array $settings settings for the new meeting
+     *
+     * @return object|null A meeting object or null if an error occurred.
      */
     public static function createMeeting($userId, $settings)
     {
-        $meeting = self::_call('users/' . $userId . '/meetings', [], $settings, 'POST');
+        $result = self::_call('users/' . $userId . '/meetings', [], $settings, 'POST');
+
+        if ($result['statuscode'] == 201) {
+            $meeting = $result['response'];
+        } else {
+            $meeting = null;
+        }
 
         if ($meeting != null) {
             $cache = StudipCacheFactory::getCache();
-            $cache->write(json_encode($meeting), 'zoom-meeting-' . $meeting->id, 10800);
+            $cache->write('zoom-meeting-' . $meeting->id, json_encode($meeting), 10800);
         }
+
+        return $meeting;
+    }
+
+    /**
+     * Updates the given meeting with the given settings.
+     *
+     * @param $meetingId
+     * @param $settings
+     *
+     * @return object|int|null A meeting object, '404' as 'not found' or null if another error occurred.
+     */
+    public static function updateMeeting($meetingId, $settings)
+    {
+        $result = self::_call('meetings/' . $meetingId, [], $settings, 'PATCH');
+
+        if ($result['statuscode'] == 204) {
+            $meeting = new StdClass();
+            $meeting->id = $meetingId;
+        } else if ($result['statuscode'] == 404) {
+            $meeting = 404;
+        } else {
+            $meeting = null;
+        }
+
+        $cache = StudipCacheFactory::getCache();
+        $cache->expire('zoom-meeting-' . $meetingId, 10800);
 
         return $meeting;
     }
@@ -96,6 +175,7 @@ class ZoomAPI {
 
         if ($useCache && $meeting = $cache->read('zoom-meeting-' . $meetingId)) {
             $meeting = json_decode($meeting);
+
             // Convert start time to DateTime object for convenience.
             $start_time = new DateTime($meeting->start_time, new DateTimeZone(self::ZOOM_TIMEZONE));
             $start_time->setTimezone(new DateTimeZone(self::LOCAL_TIMEZONE));
@@ -103,15 +183,49 @@ class ZoomAPI {
 
             return $meeting;
         } else {
-            $meeting = self::_call('meetings/' . $meetingId);
-            $cache->write(json_encode($meeting), 'zoom-meeting-' . $meetingId, 10800);
-            // Convert start time to DateTime object for convenience.
-            $start_time = new DateTime($meeting->start_time, new DateTimeZone(self::ZOOM_TIMEZONE));
-            $start_time->setTimezone(new DateTimeZone(self::LOCAL_TIMEZONE));
-            $meeting->start_time = $start_time;
+            $result = self::_call('meetings/' . $meetingId);
+
+            // Meeting found, all is well.
+            if ($result['statuscode'] == 200) {
+                $meeting = $result['response'];
+
+                $cache->write('zoom-meeting-' . $meetingId, json_encode($meeting), 10800);
+                // Convert start time to DateTime object for convenience.
+                $time = is_array($meeting->occurrences) ? $meeting->occurrences[0]->start_time : $meeting->start_time;
+                $start_time = new DateTime($time, new DateTimeZone(self::ZOOM_TIMEZONE));
+                $start_time->setTimezone(new DateTimeZone(self::LOCAL_TIMEZONE));
+                $meeting->start_time = $start_time;
+                $meeting->duration = is_array($meeting->occurrences) ?
+                    $meeting->occurrences[0]->duration :
+                    $meeting->duration;
+
+            // Meeting not found in Zoom
+            } else if ($result['statuscode'] == 404) {
+                $cache->expire('zoom-meeting-' . $meetingId);
+                $meeting = 404;
+            // Some other problem.
+            } else {
+                $meeting = null;
+            }
 
             return $meeting;
         }
+    }
+
+    public static function deleteMeeting($meetingId)
+    {
+        $cache = StudipCacheFactory::getCache();
+        $cache->expire('zoom-meeting-' . $meetingId);
+
+        $result = self::_call('meetings/' . $meetingId, [], [], 'DELETE');
+
+        if ($result['statuscode'] == 204 || $result['statuscode'] == 404) {
+            $response = $meetingId;
+        } else {
+            $response = null;
+        }
+
+        return $response;
     }
 
     /**
@@ -161,20 +275,68 @@ class ZoomAPI {
             ],
         ]);
 
-        if ($method == 'POST' && $body != null) {
+        if (($method == 'POST' || $method == 'PATCH') && $body != null) {
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
         }
 
         $response = json_decode(curl_exec($curl));
         $error = curl_error($curl);
+        $statuscode = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
 
         curl_close($curl);
 
         if ($error) {
             return null;
         } else {
-            return $response;
+            return [
+                'response' => $response,
+                'statuscode' => $statuscode
+            ];
         }
+    }
+
+    /**
+     * Get Weekdays (Zoom uses some own numbering here)
+     */
+    public static function getWeekdays()
+    {
+        return [
+            [
+                'id' => 2,
+                'name' => dgettext('zoom', 'Montag'),
+                'name_en' => 'Monday'
+            ],
+            [
+                'id' => 3,
+                'name' => dgettext('zoom', 'Dienstag'),
+                'name_en' => 'Tuesday'
+            ],
+            [
+                'id' => 4,
+                'name' => dgettext('zoom', 'Mittwoch'),
+                'name_en' => 'Wednesday'
+            ],
+            [
+                'id' => 5,
+                'name' => dgettext('zoom', 'Donnerstag'),
+                'name_en' => 'Thursday'
+            ],
+            [
+                'id' => 6,
+                'name' => dgettext('zoom', 'Freitag'),
+                'name_en' => 'Friday'
+            ],
+            [
+                'id' => 7,
+                'name' => dgettext('zoom', 'Samstag'),
+                'name_en' => 'Saturday'
+            ],
+            [
+                'id' => 1,
+                'name' => dgettext('zoom', 'Sonntag'),
+                'name_en' => 'Sunday'
+            ]
+        ];
     }
 
 }

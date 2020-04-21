@@ -10,7 +10,7 @@
  *
  * @author      Thomas Hackl <thomas.hackl@uni-passau.de>
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GPL version 2
- * @category    Whakamahere
+ * @category    Zoom
  */
 
 class Setup extends Migration {
