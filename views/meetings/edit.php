@@ -1,4 +1,10 @@
 <form class="default" action="<?php echo $controller->link_for('meetings/store') ?>" method="post">
+    <?php if ($turnout >= ZoomAPI::MAX_MEETING_MEMBERS) : ?>
+        <?php echo MessageBox::warning(sprintf(dgettext('zoom',
+            'Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit regulären ' .
+            'Zoom-Meetings abgedeckt werden kann. Bitte erfragen Sie weitere Möglichkeiten im ' .
+            '<a href="mailto:%2$s">ZIM-Support</a>.'), ZoomAPI::MAX_MEETING_MEMBERS, $GLOBALS['UNI_CONTACT'])) ?>
+    <?php endif ?>
     <fieldset>
         <legend>
             <?php echo dgettext('zoom', 'Wie soll das Meeting angelegt werden?') ?>

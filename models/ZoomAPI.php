@@ -42,6 +42,11 @@ class ZoomAPI {
     const RECURRENCE_DAILY = 1;
     const RECURRENCE_WEEKLY = 2;
     const RECURRENCE_MONTHLY = 3;
+    /**
+     * Threshold for regular meetings. If there are
+     * more participants, a Webinar plan is necessary.
+     */
+    const MAX_MEETING_MEMBERS = 300;
 
     /**
      * Gets a single user's data.

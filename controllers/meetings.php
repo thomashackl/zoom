@@ -97,6 +97,7 @@ class MeetingsController extends AuthenticatedController {
 
         $this->user = ZoomAPI::getUser();
 
+        // Get other users who are lecturers in this course.
         $this->otherLecturers = SimpleCollection::createFromArray(
             CourseMember::findBySQL(
                 "`Seminar_id` = :course AND `user_id` != :me AND `status` = 'dozent' ORDER BY `position`",
@@ -104,10 +105,12 @@ class MeetingsController extends AuthenticatedController {
             )
         );
 
+        // Other lecturers are only possible co-hosts if their Zoom account exists.
         $this->possibleCoHosts = count($this->otherLecturers) > 0 ?
             ZoomAPI::usersExist($this->otherLecturers) :
             [];
 
+        // Get number of unavailable persons for extra info message.
         $this->unavailable = count(array_filter($this->possibleCoHosts, function($one) {
             return $one == false;
         }));
@@ -138,6 +141,10 @@ class MeetingsController extends AuthenticatedController {
             $this->meeting->zoom_settings = $settings;
         }
 
+        $this->turnout = CourseMember::countBySQL(
+            "`Seminar_id` = :id AND `status` in ('user', 'autor')",
+            ['id' => $this->course->id]
+        );
     }
 
     /**

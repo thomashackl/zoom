@@ -1,7 +1,7 @@
 pluginname=Zoom-Meetings
 pluginclassname=ZoomPlugin
 origin=upa
-version=0.5
+version=1.0
 description=Create and manage Zoom meetings via Stud.IP
 studipMinVersion=4.4.99
 studipMaxVersion=4.9.99
