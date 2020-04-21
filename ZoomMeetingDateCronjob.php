@@ -65,55 +65,55 @@ class ZoomMeetingDateCronjob extends CronJob {
         foreach ($meetings as $m) {
 
             $m->useCache = false;
+            $m->getZoom_Settings();
 
             if ($parameters['verbose']) {
                 echo sprintf("Processing course %s with Zoom ID %s.\n",
                     $m->course_id, $m->zoom_meeting_id);
-                echo print_r($m->zoom_settings, 1) . "\n";
             }
 
-            // Consider only meetings which are already finished.
-            if ($m->zoom_settings->start_time->getTimestamp() + ($m->zoom_settings->duration * 60) < $now) {
-
-                // Find next course date.
-                $nextDate = CourseDate::findOneBySQL(
-                    "`range_id` = :course AND `date` >= :now ORDER BY `date` ASC",
-                    ['course' => $m->course_id, 'now' => $now]
-                );
-                echo print_r($nextDate->date, 1) . "\n";
-                $startTime = new DateTime();
-                $startTime->setTimestamp($nextDate->date);
-                $duration = ($nextDate->end_time - $nextDate->date) / 60;
-
-                if ($parameters['verbose']) {
-                    echo sprintf("Next date is %s.\n",
-                        date('Y-m-d H:i', $nextDate->date));
-                }
-
-                $newSettings = $m->zoom_settings;
-                $newSettings->start_time = $startTime->format('Y-m-d') . 'T' . $startTime->format('H:i:s');
-                $newSettings->duration = $duration;
-                $result = ZoomAPI::updateMeeting($m->zoom_meeting_id, $newSettings);
-
-                if ($result !== null && $result !== 404) {
-                    if ($parameters['verbose']) {
-                        echo sprintf("Updated settings for course %s with Zoom ID %s.\n",
-                            $m->course_id, $m->zoom_meeting_id);
-                    }
+            if ($m->zoom_settings === null || $m->zoom_settings === 404) {
+                // Meeting not found in Zoom, delete it locally.
+                if ($m->zoom_settings === 404) {
+                    echo sprintf("Zoom meeting %s not found in Zoom, deleting.\n",
+                        $m->course_id, $m->zoom_meeting_id);
+                    $m->delete();
                 } else {
+                    echo sprintf("Could not retrieve settings for course %s with Zoom ID %s.\n",
+                        $m->course_id, $m->zoom_meeting_id);
+                }
+            } else {
+                // Consider only meetings which are already finished.
+                if ($m->zoom_settings->start_time->getTimestamp() + ($m->zoom_settings->duration * 60) < $now) {
 
-                    // Meeting not found in Zoom, delete it locally.
-                    if ($result === 404) {
+                    // Find next course date.
+                    $nextDate = CourseDate::findOneBySQL(
+                        "`range_id` = :course AND `date` >= :now ORDER BY `date` ASC",
+                        ['course' => $m->course_id, 'now' => $now]
+                    );
+                    echo print_r($nextDate->date, 1) . "\n";
+                    $startTime = new DateTime();
+                    $startTime->setTimestamp($nextDate->date);
+                    $duration = ($nextDate->end_time - $nextDate->date) / 60;
+
+                    if ($parameters['verbose']) {
+                        echo sprintf("Next date is %s.\n",
+                            date('Y-m-d H:i', $nextDate->date));
+                    }
+
+                    $newSettings = $m->zoom_settings;
+                    $newSettings->start_time = $startTime->format('Y-m-d') . 'T' . $startTime->format('H:i:s');
+                    $newSettings->duration = $duration;
+                    $result = ZoomAPI::updateMeeting($m->zoom_meeting_id, $newSettings);
+
+                    if ($result !== null && $result !== 404) {
                         if ($parameters['verbose']) {
-                            echo sprintf("Settings for course %s with Zoom ID %s not found in Zoom.\n",
+                            echo sprintf("Updated settings for course %s with Zoom ID %s.\n",
                                 $m->course_id, $m->zoom_meeting_id);
                         }
-                        $m->delete();
                     } else {
-                        if ($parameters['verbose']) {
-                            echo sprintf("Could not update settings for course %s with Zoom ID %s.\n",
-                                $m->course_id, $m->zoom_meeting_id);
-                        }
+                        echo sprintf("Could not store settings for course %s with Zoom ID %s.\n",
+                            $m->course_id, $m->zoom_meeting_id);
                     }
                 }
             }

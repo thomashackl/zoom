@@ -115,6 +115,7 @@ class MeetingsController extends AuthenticatedController {
         if ($id != 0) {
             $this->meeting = ZoomMeeting::find($id);
             $this->meeting->useCache = false;
+            $this->meeting->getZoom_Settings();
         } else {
             $this->meeting = new ZoomMeeting();
             $this->meeting->type = 'coursedates';
@@ -316,7 +317,6 @@ class MeetingsController extends AuthenticatedController {
         } else {
             $this->relocate($meeting->zoom_settings->join_url);
         }
-        $this->relocate('meetings');
     }
 
 }
