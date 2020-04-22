@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-22 10:52+0200\n"
+"POT-Creation-Date: 2020-04-22 16:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,31 +17,31 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models/ZoomAPI.php:311
+#: models/ZoomAPI.php:315
 msgid "Montag"
 msgstr ""
 
-#: models/ZoomAPI.php:316
+#: models/ZoomAPI.php:320
 msgid "Dienstag"
 msgstr ""
 
-#: models/ZoomAPI.php:321
+#: models/ZoomAPI.php:325
 msgid "Mittwoch"
 msgstr ""
 
-#: models/ZoomAPI.php:326
+#: models/ZoomAPI.php:330
 msgid "Donnerstag"
 msgstr ""
 
-#: models/ZoomAPI.php:331
+#: models/ZoomAPI.php:335
 msgid "Freitag"
 msgstr ""
 
-#: models/ZoomAPI.php:336
+#: models/ZoomAPI.php:340
 msgid "Samstag"
 msgstr ""
 
-#: models/ZoomAPI.php:341
+#: models/ZoomAPI.php:345
 msgid "Sonntag"
 msgstr ""
 
@@ -70,29 +70,41 @@ msgstr ""
 msgid "Zoom-Meeting bearbeiten"
 msgstr ""
 
-#: controllers/meetings.php:272
+#: controllers/meetings.php:126
+msgid ""
+"Das Meeting ist nicht mehr in Zoom vorhanden und wurde daher auch in Stud.IP "
+"gelöscht."
+msgstr ""
+
+#: controllers/meetings.php:130
+msgid ""
+"Das Meeting ist nicht mehr in Zoom vorhanden, konnte aber nicht automatisch "
+"in Stud.IP gelöscht werden."
+msgstr ""
+
+#: controllers/meetings.php:286
 msgid "Das Meeting wurde gespeichert."
 msgstr ""
 
-#: controllers/meetings.php:274
+#: controllers/meetings.php:288
 msgid "Das Meeting kann nicht gespeichert werden."
 msgstr ""
 
-#: controllers/meetings.php:280
+#: controllers/meetings.php:294
 msgid ""
 "Das Meeting kann nicht gespeichert werden, da die Daten nicht an Zoom "
 "übertragen werden konnten."
 msgstr ""
 
-#: controllers/meetings.php:302
+#: controllers/meetings.php:316
 msgid "Das Meeting wurde gelöscht."
 msgstr ""
 
-#: controllers/meetings.php:304
+#: controllers/meetings.php:318
 msgid "Das Meeting konnte nicht aus Stud.IP gelöscht werden."
 msgstr ""
 
-#: controllers/meetings.php:308
+#: controllers/meetings.php:322
 msgid "Das Meeting konnte nicht in Zoom gelöscht werden."
 msgstr ""
 

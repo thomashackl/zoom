@@ -47,6 +47,10 @@ class ZoomAPI {
      * more participants, a Webinar plan is necessary.
      */
     const MAX_MEETING_MEMBERS = 300;
+    /**
+     * Default cache lifetime for Zoom entries in seconds
+     */
+    const CACHE_LIFETIME = 1800;
 
     /**
      * Gets a single user's data.
@@ -133,7 +137,7 @@ class ZoomAPI {
 
         if ($meeting != null) {
             $cache = StudipCacheFactory::getCache();
-            $cache->write('zoom-meeting-' . $meeting->id, json_encode($meeting), 10800);
+            $cache->write('zoom-meeting-' . $meeting->id, json_encode($meeting), self::CACHE_LIFETIME);
         }
 
         return $meeting;
@@ -161,7 +165,7 @@ class ZoomAPI {
         }
 
         $cache = StudipCacheFactory::getCache();
-        $cache->expire('zoom-meeting-' . $meetingId, 10800);
+        $cache->expire('zoom-meeting-' . $meetingId, self::CACHE_LIFETIME);
 
         return $meeting;
     }
@@ -194,7 +198,7 @@ class ZoomAPI {
             if ($result['statuscode'] == 200) {
                 $meeting = $result['response'];
 
-                $cache->write('zoom-meeting-' . $meetingId, json_encode($meeting), 10800);
+                $cache->write('zoom-meeting-' . $meetingId, json_encode($meeting), self::CACHE_LIFETIME);
                 // Convert start time to DateTime object for convenience.
                 $time = is_array($meeting->occurrences) ? $meeting->occurrences[0]->start_time : $meeting->start_time;
                 $start_time = new DateTime($time, new DateTimeZone(self::ZOOM_TIMEZONE));

@@ -118,7 +118,21 @@ class MeetingsController extends AuthenticatedController {
         if ($id != 0) {
             $this->meeting = ZoomMeeting::find($id);
             $this->meeting->useCache = false;
-            $this->meeting->getZoom_Settings();
+
+            // Meeting not found in Zoom, delete it automatically.
+            if ($this->meeting->zoom_settings === 404) {
+                if ($this->meeting->delete()) {
+                    PageLayout::postWarning(
+                        dgettext('zoom','Das Meeting ist nicht mehr in Zoom vorhanden und ' .
+                            'wurde daher auch in Stud.IP gelöscht.'));
+                } else {
+                    PageLayout::postWarning(
+                        dgettext('zoom','Das Meeting ist nicht mehr in Zoom vorhanden, ' .
+                            'konnte aber nicht automatisch in Stud.IP gelöscht werden.'));
+                }
+                $this->relocate('meetings');
+            }
+
         } else {
             $this->meeting = new ZoomMeeting();
             $this->meeting->type = 'coursedates';

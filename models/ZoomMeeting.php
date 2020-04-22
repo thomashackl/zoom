@@ -59,9 +59,8 @@ class ZoomMeeting extends SimpleORMap
     {
         if ($this->zoomData == null) {
             $this->zoomData = ZoomAPI::getMeeting($this->zoom_meeting_id, $this->useCache);
-        } else {
-            return $this->zoomData;
         }
+        return $this->zoomData;
     }
 
     public function setZoom_Settings($data)
