@@ -1,0 +1,271 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-22 10:52+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: models/ZoomAPI.php:311
+msgid "Montag"
+msgstr ""
+
+#: models/ZoomAPI.php:316
+msgid "Dienstag"
+msgstr ""
+
+#: models/ZoomAPI.php:321
+msgid "Mittwoch"
+msgstr ""
+
+#: models/ZoomAPI.php:326
+msgid "Donnerstag"
+msgstr ""
+
+#: models/ZoomAPI.php:331
+msgid "Freitag"
+msgstr ""
+
+#: models/ZoomAPI.php:336
+msgid "Samstag"
+msgstr ""
+
+#: models/ZoomAPI.php:341
+msgid "Sonntag"
+msgstr ""
+
+#: controllers/meetings.php:47 ZoomPlugin.php:54
+msgid "Meetings"
+msgstr ""
+
+#: controllers/meetings.php:63
+#, php-format
+msgid ""
+"Für Sie existiert noch keine Kennung in Zoom, daher können Sie momentan "
+"kein Meeting anlegen. Bitte loggen Sie sich einmalig unter <a href=\"%1$s\" "
+"target=\"_blank\">%1$s</a> ein, damit ihre Kennung angelegt wird. Danach "
+"können Sie hier Meetings anlegen."
+msgstr ""
+
+#: controllers/meetings.php:71
+msgid "Meeting erstellen"
+msgstr ""
+
+#: controllers/meetings.php:93
+msgid "Zoom-Meeting anlegen"
+msgstr ""
+
+#: controllers/meetings.php:94
+msgid "Zoom-Meeting bearbeiten"
+msgstr ""
+
+#: controllers/meetings.php:272
+msgid "Das Meeting wurde gespeichert."
+msgstr ""
+
+#: controllers/meetings.php:274
+msgid "Das Meeting kann nicht gespeichert werden."
+msgstr ""
+
+#: controllers/meetings.php:280
+msgid ""
+"Das Meeting kann nicht gespeichert werden, da die Daten nicht an Zoom "
+"übertragen werden konnten."
+msgstr ""
+
+#: controllers/meetings.php:302
+msgid "Das Meeting wurde gelöscht."
+msgstr ""
+
+#: controllers/meetings.php:304
+msgid "Das Meeting konnte nicht aus Stud.IP gelöscht werden."
+msgstr ""
+
+#: controllers/meetings.php:308
+msgid "Das Meeting konnte nicht in Zoom gelöscht werden."
+msgstr ""
+
+#: views/meetings/index.php:3
+msgid "Es wurden keine Zoom-Meetings für diese Veranstaltung gefunden."
+msgstr ""
+
+#: views/meetings/index.php:7
+#, php-format
+msgid "Zoom-Meetings zu dieser Veranstaltung"
+msgstr ""
+
+#: views/meetings/index.php:16 views/meetings/edit.php:43
+msgid "Titel"
+msgstr ""
+
+#: views/meetings/index.php:19
+msgid "Aktionen"
+msgstr ""
+
+#: views/meetings/index.php:29
+#, php-format
+msgid "Nächster Termin: %s"
+msgstr ""
+
+#: views/meetings/index.php:33
+msgid "Teilnehmen"
+msgstr ""
+
+#: views/meetings/index.php:42
+msgid "Soll das Meeting wirklich gelöscht werden?"
+msgstr ""
+
+#: views/meetings/edit.php:4
+#, php-format
+msgid ""
+"Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit regul�"
+"�ren Zoom-Meetings abgedeckt werden kann. Bitte erfragen Sie weitere "
+"Möglichkeiten im <a href=\"mailto:%2$s\">ZIM-Support</a>."
+msgstr ""
+
+#: views/meetings/edit.php:10
+msgid "Wie soll das Meeting angelegt werden?"
+msgstr ""
+
+#: views/meetings/edit.php:16
+msgid "Meeting mit Veranstaltungsterminen verknüpfen"
+msgstr ""
+
+#: views/meetings/edit.php:19
+msgid ""
+"Das angelegte Meeting wird automatisch seine Zeiten aktualisieren und immer "
+"den nächsten verfügbaren Veranstaltungstermin als Zeit gesetzt haben."
+msgstr ""
+
+#: views/meetings/edit.php:28
+msgid "Meeting mit manuellem Termin"
+msgstr ""
+
+#: views/meetings/edit.php:31
+msgid ""
+"Die Zeit, zu der das Meeting stattfindet, kann hier angegeben werden und "
+"bleibt unverändlich, außer, sie wird manuell bearbeitet. Es kann auch ein "
+"wöchentlicher Wiederholungszyklus an mehreren Wochentagen eingestellt "
+"werden."
+msgstr ""
+
+#: views/meetings/edit.php:39
+msgid "Grunddaten"
+msgstr ""
+
+#: views/meetings/edit.php:50
+msgid "Beschreibung"
+msgstr ""
+
+#: views/meetings/edit.php:57
+msgid "Passwort"
+msgstr ""
+
+#: views/meetings/edit.php:66
+msgid "Wann findet das Meeting statt?"
+msgstr ""
+
+#: views/meetings/edit.php:70
+msgid "Beginn"
+msgstr ""
+
+#: views/meetings/edit.php:77
+msgid "Dauer (in Minuten)"
+msgstr ""
+
+#: views/meetings/edit.php:85
+msgid "Findet das Meeting wiederholt statt?"
+msgstr ""
+
+#: views/meetings/edit.php:92
+msgid "Keine Wiederholung"
+msgstr ""
+
+#: views/meetings/edit.php:100
+msgid "Wöchentlich (bis Semesterende)"
+msgstr ""
+
+#: views/meetings/edit.php:109
+msgid "Weitere Personen mit Vollzugriff auf dieses Meeting (Co-Hosts)"
+msgstr ""
+
+#: views/meetings/edit.php:133
+#, php-format
+msgid ""
+"Für eine(n) oder mehrere Lehrende dieser Veranstaltung existiert noch keine "
+"Kennung in Zoom, daher können diese Personen momentan nicht als Co-Host "
+"eingetragen werden. Bitten Sie die Personen, sich einmalig unter <a href="
+"\"%1$s\" target=\"_blank\">%1$s</a> einzuloggen, damit die Kennung angelegt "
+"wird. Danach können Sie die Personen als Co-Host eintragen."
+msgstr ""
+
+#: views/meetings/edit.php:145
+msgid "Zoom-Einstellungen"
+msgstr ""
+
+#: views/meetings/edit.php:151
+msgid "Video starten, wenn ein Host den Raum betritt"
+msgstr ""
+
+#: views/meetings/edit.php:158
+msgid "Video starten, wenn ein(e) Teilnehmer(in) den Raum betritt"
+msgstr ""
+
+#: views/meetings/edit.php:165
+msgid "Teilnehmende dürfen den Raum vor dem Host betreten"
+msgstr ""
+
+#: views/meetings/edit.php:172
+msgid "Teilnehmende beim Betreten automatisch stumm schalten"
+msgstr ""
+
+#: views/meetings/edit.php:181
+msgid "Speichern"
+msgstr ""
+
+#: views/meetings/edit.php:182
+msgid "Abbrechen"
+msgstr ""
+
+#: ZoomPlugin.php:33
+msgid "Zoom"
+msgstr ""
+
+#: ZoomPlugin.php:66
+msgid "Anlegen und Verwalten von Zoom-Meetings"
+msgstr ""
+
+#: ZoomPlugin.php:67
+msgid ""
+"Legen Sie Zoom-Meetingräume an, terminieren und verwalten Sie diese, laden "
+"Sie Teilnehmende ein."
+msgstr ""
+
+#: ZoomPlugin.php:68
+msgid "Lehr- und Lernorganisation"
+msgstr ""
+
+#: ZoomMeetingDateCronjob.php:20
+msgid "Zoom-Meetings automatisch an Veranstaltungstermine anpassen"
+msgstr ""
+
+#: ZoomMeetingDateCronjob.php:24
+msgid ""
+"Aktualisiert vergangene Zoom-Meetings in Veranstaltungen und setzt die Zeit "
+"auf den jeweils nächsten Termin."
+msgstr ""
+
+#: ZoomMeetingDateCronjob.php:38
+msgid "Sollen Ausgaben erzeugt werden?"
+msgstr ""

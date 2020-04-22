@@ -97,7 +97,7 @@
                         <?php echo $meeting->zoom_settings->type == ZoomAPI::MEETING_RECURRING_FIXED_TIME ?
                             'checked' : '' ?>>
                     <label for="weekly" class="undecorated">
-                        <?php echo dgettext('zoom', 'Wöchentlich') ?>
+                        <?php echo dgettext('zoom', 'Wöchentlich (bis Semesterende)') ?>
                     </label>
                 </section>
             </section>
