@@ -11,14 +11,32 @@
         </legend>
         <section>
             <input type="radio" name="create_type" value="coursedates" id="create-coursedates"
-                <?php echo $meeting->type == 'coursedates' ? 'checked' : '' ?>>
+                <?php echo $meeting->type == 'coursedates' ? 'checked' : '' ?>
+                <?php echo $dateCount < 1 ? 'disabled' : '' ?>>
             <label for="create-coursedates" class="undecorated">
+                <?php if ($dateCount < 1) : ?>
+                    <span class="not-available">
+                <?php endif ?>
                 <?php echo dgettext('zoom', 'Meeting mit Veranstaltungsterminen verknüpfen') ?>
+                <?php if ($dateCount < 1) : ?>
+                    </span>
+                <?php endif ?>
             </label>
             <div class="info">
-                <?php echo dgettext('zoom', 'Das angelegte Meeting wird automatisch seine ' .
-                    'Zeiten aktualisieren und immer den nächsten verfügbaren Veranstaltungstermin als Zeit ' .
-                    'gesetzt haben.') ?>
+                <?php if ($dateCount > 0) : ?>
+                    <?php echo dgettext('zoom', 'Das angelegte Meeting wird automatisch seine ' .
+                        'Zeiten aktualisieren und immer den nächsten verfügbaren Veranstaltungstermin als Zeit ' .
+                        'gesetzt haben.') ?>
+                <?php else : ?>
+                    <?php if ($meeting->isNew()) : ?>
+                        <?php echo dgettext('zoom', 'Da diese Veranstaltung keine zukünftigen ' .
+                            'Termine hat, kann auch kein Meeting angelegt werden, das mit Terminen verknüpft ist.') ?>
+                    <?php else : ?>
+                        <input type="hidden" name="create_type" value="coursedates">
+                        <?php echo dgettext('zoom', 'Das angelegte Meeting ist mit den Terminen ' .
+                            'dieser Veranstaltung verknüpft, allerdings gibt es keine zukünftigen Termine.') ?>
+                    <?php endif ?>
+                <?php endif ?>
             </div>
         </section>
         <section>

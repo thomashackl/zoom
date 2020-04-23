@@ -91,28 +91,34 @@ class ZoomMeetingDateCronjob extends CronJob {
                         "`range_id` = :course AND `date` >= :now ORDER BY `date` ASC",
                         ['course' => $m->course_id, 'now' => $now]
                     );
-                    echo print_r($nextDate->date, 1) . "\n";
-                    $startTime = new DateTime();
-                    $startTime->setTimestamp($nextDate->date);
-                    $duration = ($nextDate->end_time - $nextDate->date) / 60;
 
-                    if ($parameters['verbose']) {
-                        echo sprintf("Next date is %s.\n",
-                            date('Y-m-d H:i', $nextDate->date));
-                    }
+                    if ($nextDate) {
+                        $startTime = new DateTime();
+                        $startTime->setTimestamp($nextDate->date);
+                        $duration = ($nextDate->end_time - $nextDate->date) / 60;
 
-                    $newSettings = $m->zoom_settings;
-                    $newSettings->start_time = $startTime->format('Y-m-d') . 'T' . $startTime->format('H:i:s');
-                    $newSettings->duration = $duration;
-                    $result = ZoomAPI::updateMeeting($m->zoom_meeting_id, $newSettings);
-
-                    if ($result !== null && $result !== 404) {
                         if ($parameters['verbose']) {
-                            echo sprintf("Updated settings for course %s with Zoom ID %s.\n",
+                            echo sprintf("Next date is %s.\n",
+                                date('Y-m-d H:i', $nextDate->date));
+                        }
+
+                        $newSettings = $m->zoom_settings;
+                        $newSettings->start_time =
+                            $startTime->format('Y-m-d') . 'T' . $startTime->format('H:i:s');
+                        $newSettings->duration = $duration;
+                        $result = ZoomAPI::updateMeeting($m->zoom_meeting_id, $newSettings);
+
+                        if ($result !== null && $result !== 404) {
+                            if ($parameters['verbose']) {
+                                echo sprintf("Updated settings for course %s with Zoom ID %s.\n",
+                                    $m->course_id, $m->zoom_meeting_id);
+                            }
+                        } else {
+                            echo sprintf("Could not store settings for course %s with Zoom ID %s.\n",
                                 $m->course_id, $m->zoom_meeting_id);
                         }
                     } else {
-                        echo sprintf("Could not store settings for course %s with Zoom ID %s.\n",
+                        echo sprintf("Course %s with Zoom ID %s has no next date, keeping data.\n",
                             $m->course_id, $m->zoom_meeting_id);
                     }
                 }

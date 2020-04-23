@@ -115,6 +115,12 @@ class MeetingsController extends AuthenticatedController {
             return $one == false;
         }));
 
+        // Check if this course has any future dates.
+        $this->dateCount = CourseDate::countBySQL(
+            "`range_id` = :course AND `date` >= :now ORDER BY `date` ASC",
+            ['course' => $this->course->id, 'now' => time()]
+        );
+
         if ($id != 0) {
             $this->meeting = ZoomMeeting::find($id);
             $this->meeting->useCache = false;
@@ -135,7 +141,8 @@ class MeetingsController extends AuthenticatedController {
 
         } else {
             $this->meeting = new ZoomMeeting();
-            $this->meeting->type = 'coursedates';
+
+            $this->meeting->type = $this->dateCount > 0 ? 'coursedates' : 'manual';
 
             $nextHour = new DateTime('now +1 hour', new DateTimeZone(ZoomAPI::LOCAL_TIMEZONE));
             $nextHour->setTime($nextHour->format('H'), 0, 0);
@@ -196,9 +203,16 @@ class MeetingsController extends AuthenticatedController {
                 "`range_id` = :course AND `date` >= :now ORDER BY `date` ASC",
                 ['course' => $this->course->id, 'now' => time()]
             );
-            $startTime = new DateTime();
-            $startTime->setTimestamp($nextDate->date);
-            $duration = ($nextDate->end_time - $nextDate->date) / 60;
+
+            if ($nextDate) {
+                $startTime = new DateTime();
+                $startTime->setTimestamp($nextDate->date);
+                $duration = ($nextDate->end_time - $nextDate->date) / 60;
+            } else {
+                $startTime = $meeting->zoom_settings->start_time;
+                $duration = $meeting->zoom_settings->duration;
+            }
+
             $type = ZoomAPI::MEETING_SCHEDULED;
 
         // Create meeting with manual date(s).

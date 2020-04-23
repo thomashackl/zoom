@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-22 16:29+0200\n"
+"POT-Creation-Date: 2020-04-23 08:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,41 +70,41 @@ msgstr ""
 msgid "Zoom-Meeting bearbeiten"
 msgstr ""
 
-#: controllers/meetings.php:126
+#: controllers/meetings.php:132
 msgid ""
 "Das Meeting ist nicht mehr in Zoom vorhanden und wurde daher auch in Stud.IP "
 "gelöscht."
 msgstr ""
 
-#: controllers/meetings.php:130
+#: controllers/meetings.php:136
 msgid ""
 "Das Meeting ist nicht mehr in Zoom vorhanden, konnte aber nicht automatisch "
 "in Stud.IP gelöscht werden."
 msgstr ""
 
-#: controllers/meetings.php:286
+#: controllers/meetings.php:300
 msgid "Das Meeting wurde gespeichert."
 msgstr ""
 
-#: controllers/meetings.php:288
+#: controllers/meetings.php:302
 msgid "Das Meeting kann nicht gespeichert werden."
 msgstr ""
 
-#: controllers/meetings.php:294
+#: controllers/meetings.php:308
 msgid ""
 "Das Meeting kann nicht gespeichert werden, da die Daten nicht an Zoom "
 "übertragen werden konnten."
 msgstr ""
 
-#: controllers/meetings.php:316
+#: controllers/meetings.php:330
 msgid "Das Meeting wurde gelöscht."
 msgstr ""
 
-#: controllers/meetings.php:318
+#: controllers/meetings.php:332
 msgid "Das Meeting konnte nicht aus Stud.IP gelöscht werden."
 msgstr ""
 
-#: controllers/meetings.php:322
+#: controllers/meetings.php:336
 msgid "Das Meeting konnte nicht in Zoom gelöscht werden."
 msgstr ""
 
@@ -117,7 +117,7 @@ msgstr ""
 msgid "Zoom-Meetings zu dieser Veranstaltung"
 msgstr ""
 
-#: views/meetings/index.php:16 views/meetings/edit.php:43
+#: views/meetings/index.php:16 views/meetings/edit.php:61
 msgid "Titel"
 msgstr ""
 
@@ -150,21 +150,33 @@ msgstr ""
 msgid "Wie soll das Meeting angelegt werden?"
 msgstr ""
 
-#: views/meetings/edit.php:16
+#: views/meetings/edit.php:20
 msgid "Meeting mit Veranstaltungsterminen verknüpfen"
 msgstr ""
 
-#: views/meetings/edit.php:19
+#: views/meetings/edit.php:27
 msgid ""
 "Das angelegte Meeting wird automatisch seine Zeiten aktualisieren und immer "
 "den nächsten verfügbaren Veranstaltungstermin als Zeit gesetzt haben."
 msgstr ""
 
-#: views/meetings/edit.php:28
+#: views/meetings/edit.php:32
+msgid ""
+"Da diese Veranstaltung keine zukünftigen Termine hat, kann auch kein "
+"Meeting angelegt werden, das mit Terminen verknüpft ist."
+msgstr ""
+
+#: views/meetings/edit.php:36
+msgid ""
+"Das angelegte Meeting ist mit den Terminen dieser Veranstaltung verknüpft, "
+"allerdings gibt es keine zukünftigen Termine."
+msgstr ""
+
+#: views/meetings/edit.php:46
 msgid "Meeting mit manuellem Termin"
 msgstr ""
 
-#: views/meetings/edit.php:31
+#: views/meetings/edit.php:49
 msgid ""
 "Die Zeit, zu der das Meeting stattfindet, kann hier angegeben werden und "
 "bleibt unverändlich, außer, sie wird manuell bearbeitet. Es kann auch ein "
@@ -172,47 +184,47 @@ msgid ""
 "werden."
 msgstr ""
 
-#: views/meetings/edit.php:39
+#: views/meetings/edit.php:57
 msgid "Grunddaten"
 msgstr ""
 
-#: views/meetings/edit.php:50
+#: views/meetings/edit.php:68
 msgid "Beschreibung"
 msgstr ""
 
-#: views/meetings/edit.php:57
+#: views/meetings/edit.php:75
 msgid "Passwort"
 msgstr ""
 
-#: views/meetings/edit.php:66
+#: views/meetings/edit.php:84
 msgid "Wann findet das Meeting statt?"
 msgstr ""
 
-#: views/meetings/edit.php:70
+#: views/meetings/edit.php:88
 msgid "Beginn"
 msgstr ""
 
-#: views/meetings/edit.php:77
+#: views/meetings/edit.php:95
 msgid "Dauer (in Minuten)"
 msgstr ""
 
-#: views/meetings/edit.php:85
+#: views/meetings/edit.php:103
 msgid "Findet das Meeting wiederholt statt?"
 msgstr ""
 
-#: views/meetings/edit.php:92
+#: views/meetings/edit.php:110
 msgid "Keine Wiederholung"
 msgstr ""
 
-#: views/meetings/edit.php:100
+#: views/meetings/edit.php:118
 msgid "Wöchentlich (bis Semesterende)"
 msgstr ""
 
-#: views/meetings/edit.php:109
+#: views/meetings/edit.php:127
 msgid "Weitere Personen mit Vollzugriff auf dieses Meeting (Co-Hosts)"
 msgstr ""
 
-#: views/meetings/edit.php:133
+#: views/meetings/edit.php:151
 #, php-format
 msgid ""
 "Für eine(n) oder mehrere Lehrende dieser Veranstaltung existiert noch keine "
@@ -222,31 +234,31 @@ msgid ""
 "wird. Danach können Sie die Personen als Co-Host eintragen."
 msgstr ""
 
-#: views/meetings/edit.php:145
+#: views/meetings/edit.php:163
 msgid "Zoom-Einstellungen"
 msgstr ""
 
-#: views/meetings/edit.php:151
+#: views/meetings/edit.php:169
 msgid "Video starten, wenn ein Host den Raum betritt"
 msgstr ""
 
-#: views/meetings/edit.php:158
+#: views/meetings/edit.php:176
 msgid "Video starten, wenn ein(e) Teilnehmer(in) den Raum betritt"
 msgstr ""
 
-#: views/meetings/edit.php:165
+#: views/meetings/edit.php:183
 msgid "Teilnehmende dürfen den Raum vor dem Host betreten"
 msgstr ""
 
-#: views/meetings/edit.php:172
+#: views/meetings/edit.php:190
 msgid "Teilnehmende beim Betreten automatisch stumm schalten"
 msgstr ""
 
-#: views/meetings/edit.php:181
+#: views/meetings/edit.php:199
 msgid "Speichern"
 msgstr ""
 
-#: views/meetings/edit.php:182
+#: views/meetings/edit.php:200
 msgid "Abbrechen"
 msgstr ""
 
