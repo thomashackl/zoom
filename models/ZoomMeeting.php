@@ -17,6 +17,7 @@
  * @property string user_id database column
  * @property string course_id database column
  * @property string type database column
+ * @property int webinar database column
  * @property long zoom_meeting_id database column
  * @property string mkdate database column
  * @property string chdate database column
@@ -58,7 +59,7 @@ class ZoomMeeting extends SimpleORMap
     public function getZoom_Settings()
     {
         if ($this->zoomData == null) {
-            $this->zoomData = ZoomAPI::getMeeting($this->zoom_meeting_id, $this->useCache);
+            $this->zoomData = ZoomAPI::getMeeting($this->zoom_meeting_id, $this->useCache, $this->webinar);
         }
         return $this->zoomData;
     }

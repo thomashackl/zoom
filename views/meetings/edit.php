@@ -1,10 +1,4 @@
 <form class="default" action="<?php echo $controller->link_for('meetings/store') ?>" method="post">
-    <?php if ($turnout >= ZoomAPI::MAX_MEETING_MEMBERS) : ?>
-        <?php echo MessageBox::warning(sprintf(dgettext('zoom',
-            'Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit regulären ' .
-            'Zoom-Meetings abgedeckt werden kann. Bitte erfragen Sie weitere Möglichkeiten im ' .
-            '<a href="mailto:%2$s">ZIM-Support</a>.'), ZoomAPI::MAX_MEETING_MEMBERS, $GLOBALS['UNI_CONTACT'])) ?>
-    <?php endif ?>
     <fieldset>
         <legend>
             <?php echo dgettext('zoom', 'Wie soll das Meeting angelegt werden?') ?>
@@ -162,34 +156,15 @@
         <legend>
             <?php echo dgettext('zoom', 'Zoom-Einstellungen') ?>
         </legend>
-        <section class="col-3">
-            <input type="checkbox" name="settings[host_video]" id="host-video" value="1"
-                <?php echo $meeting->zoom_settings->settings->host_video ? ' checked' : '' ?>>
-            <label for="host-video" class="undecorated">
-                <?php echo dgettext('zoom', 'Video starten, wenn ein Host den Raum betritt') ?>
-            </label>
-        </section>
-        <section class="col-3">
-            <input type="checkbox" name="settings[participant_video]" id="participant-video" value="1"
-                <?php echo $meeting->zoom_settings->settings->participant_video ? ' checked' : '' ?>>
-            <label for="participant-video" class="undecorated">
-                <?php echo dgettext('zoom', 'Video starten, wenn ein(e) Teilnehmer(in) den Raum betritt') ?>
-            </label>
-        </section>
-        <section class="col-3">
-            <input type="checkbox" name="settings[join_before_host]" id="join-before-host" value="1"
-                <?php echo $meeting->zoom_settings->settings->join_before_host ? ' checked' : '' ?>>
-            <label for="join-before-host" class="undecorated">
-                <?php echo dgettext('zoom', 'Teilnehmende dürfen den Raum vor dem Host betreten') ?>
-            </label>
-        </section>
-        <section class="col-3">
-            <input type="checkbox" name="settings[mute_upon_entry]" id="mute-upon-entry" value="1"
-                <?php echo $meeting->zoom_settings->settings->mute_upon_entry ? ' checked' : '' ?>>
-            <label for="mute-upon-entry" class="undecorated">
-                <?php echo dgettext('zoom', 'Teilnehmende beim Betreten automatisch stumm schalten') ?>
-            </label>
-        </section>
+        <?php foreach ($roomSettings as $name => $one) : ?>
+            <section class="col-3">
+                <input type="checkbox" name="settings[<?php echo $one['name'] ?>]" id="<?php echo $one['name'] ?>"
+                       value="1" <?php echo $meeting->zoom_settings->settings->$name ? ' checked' : '' ?>>
+                <label for="<?php echo $one['name'] ?>" class="undecorated">
+                    <?php echo $one['label'] ?>
+                </label>
+            </section>
+        <?php endforeach ?>
     </fieldset>
     <footer data-dialog-button>
         <?php if (!$meeting->isNew()) : ?>

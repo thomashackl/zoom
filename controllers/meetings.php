@@ -66,12 +66,35 @@ class MeetingsController extends AuthenticatedController {
                         'Danach können Sie hier Meetings anlegen.'),
                     Config::get()->ZOOM_LOGIN_URL));
             } else {
-                $sidebar = Sidebar::get();
-                $actions = new ActionsWidget();
-                $actions->addLink(dgettext('zoom', 'Meeting erstellen'),
-                    $this->link_for('meetings/edit'),
-                    Icon::create('add'))->asDialog('size="auto"');
-                $sidebar->addWidget($actions);
+                $this->turnout = CourseMember::countBySQL(
+                    "`Seminar_id` = :id AND `status` in ('user', 'autor')",
+                    ['id' => $this->course->id]
+                );
+
+                $mayCreate = true;
+                if ($this->turnout > ZoomAPI::MAX_MEETING_MEMBERS) {
+                    $settings = ZoomAPI::getUserSettings();
+
+                    if (!$settings->feature->webinar) {
+                        $mayCreate = false;
+
+                        $this->need_license = true;
+                    } else if ($settings->feature->webinar_capacity < $this->turnout) {
+                        $mayCreate = false;
+
+                        $this->max_turnout = $settings->feature->webinar_capacity;
+                        $this->need_larger_license = true;
+                    }
+                }
+
+                if ($mayCreate) {
+                    $sidebar = Sidebar::get();
+                    $actions = new ActionsWidget();
+                    $actions->addLink(dgettext('zoom', 'Meeting erstellen'),
+                        $this->link_for('meetings/edit'),
+                        Icon::create('add'))->asDialog('size="auto"');
+                    $sidebar->addWidget($actions);
+                }
             }
         }
 
@@ -121,9 +144,17 @@ class MeetingsController extends AuthenticatedController {
             ['course' => $this->course->id, 'now' => time()]
         );
 
+        $this->turnout = CourseMember::countBySQL(
+            "`Seminar_id` = :id AND `status` in ('user', 'autor')",
+            ['id' => $this->course->id]
+        );
+
         if ($id != 0) {
             $this->meeting = ZoomMeeting::find($id);
             $this->meeting->useCache = false;
+
+            $this->roomSettings = ZoomAPI::getRoomSettings(
+                $this->meeting->webinar ? 'webinar' : 'meeting');
 
             // Meeting not found in Zoom, delete it automatically.
             if ($this->meeting->zoom_settings === 404) {
@@ -143,6 +174,7 @@ class MeetingsController extends AuthenticatedController {
             $this->meeting = new ZoomMeeting();
 
             $this->meeting->type = $this->dateCount > 0 ? 'coursedates' : 'manual';
+            $this->meeting->webinar = $this->turnout <= ZoomAPI::MAX_MEETING_MEMBERS ? 0 : 1;
 
             $nextHour = new DateTime('now +1 hour', new DateTimeZone(ZoomAPI::LOCAL_TIMEZONE));
             $nextHour->setTime($nextHour->format('H'), 0, 0);
@@ -154,18 +186,18 @@ class MeetingsController extends AuthenticatedController {
             $settings->password = rand(100000, 9999999999);
             $settings->agenda = '';
             $settings->settings = new StdClass();
-            $settings->settings->host_video = 0;
-            $settings->settings->participant_video = 0;
-            $settings->settings->join_before_host = 0;
-            $settings->settings->mute_upon_entry = 1;
+
+            $this->roomSettings = ZoomAPI::getRoomSettings(
+                $this->meeting->webinar ? 'webinar' : 'meeting');
+            foreach ($this->roomSettings as $name => $one) {
+                $settings->settings->$name = $one['default'];
+            }
+
             $settings->settings->alternative_hosts = '';
+
             $this->meeting->zoom_settings = $settings;
         }
 
-        $this->turnout = CourseMember::countBySQL(
-            "`Seminar_id` = :id AND `status` in ('user', 'autor')",
-            ['id' => $this->course->id]
-        );
     }
 
     /**
@@ -186,11 +218,31 @@ class MeetingsController extends AuthenticatedController {
 
         } else {
 
+            $turnout = CourseMember::countBySQL(
+                "`Seminar_id` = :id AND `status` in ('user', 'autor')",
+                ['id' => $this->course->id]
+            );
+
+            $settings = ZoomAPI::getUserSettings();
+
             $meeting = new ZoomMeeting();
             $meeting->user_id = User::findCurrent()->id;
             $meeting->course_id = $this->course->id;
             $meeting->mkdate = date('Y-m-d H:i:s');
 
+            if ($turnout > ZoomAPI::MAX_MEETING_MEMBERS) {
+                if ($settings->feature->webinar && $settings->feature->webinar_capacity >= $turnout) {
+                    $meeting->webinar = 1;
+                } else {
+                    throw new AccessDeniedException(sprintf(dgettext('zoom',
+                        'Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit regulären ' .
+                        'Zoom-Meetings abgedeckt werden kann. Um eine Freischaltung zur Erstellung größerer '.
+                        'Webinare zu bekommen, wenden Sie sich bitte an den <a href="mailto:%2$s">ZIM-Support</a>.'),
+                        ZoomAPI::MAX_MEETING_MEMBERS, $GLOBALS['UNI_CONTACT']));
+                }
+            } else {
+                $meeting->webinar = 0;
+            }
         }
 
         $meeting->chdate = date('Y-m-d H:i:s');
@@ -225,11 +277,15 @@ class MeetingsController extends AuthenticatedController {
 
             if (Request::int('recurring') == 0) {
 
-                $type = ZoomAPI::MEETING_SCHEDULED;
+                $type = $meeting->webinar ?
+                    ZoomAPI::WEBINAR_WEBINAR :
+                    ZoomAPI::MEETING_SCHEDULED;
 
             } else {
 
-                $type = ZoomAPI::MEETING_RECURRING_FIXED_TIME;
+                $type = $meeting->webinar ?
+                    ZoomAPI::WEBINAR_RECURRING_FIXED_TIME :
+                    ZoomAPI::MEETING_RECURRING_FIXED_TIME;
 
                 // Try to find the last date before lecture period end.
                 $semesterEnd = new DateTime();
@@ -255,6 +311,13 @@ class MeetingsController extends AuthenticatedController {
 
         $zoomArray = Request::getArray('settings');
 
+        $availableOptions = ZoomAPI::getRoomSettings($meeting->webinar ? 'webinar' : 'meeting');
+
+        $options = [];
+        foreach ($availableOptions as $one) {
+            $options[$one['name']] = $zoomArray[$one['name']] == 1 ? true : false;
+        }
+
         $zoomSettings = [
             'type' => $type,
             'topic' => Request::get('topic'),
@@ -263,12 +326,7 @@ class MeetingsController extends AuthenticatedController {
             'duration' => $duration,
             'password' => Request::get('password'),
             'agenda' => Request::get('agenda'),
-            'settings' => [
-                'host_video' => $zoomArray['host_video'] == 1 ? true : false,
-                'participant_video' => $zoomArray['participant_video'] == 1 ? true : false,
-                'join_before_host' => $zoomArray['join_before_host'] == 1 ? true : false,
-                'mute_upon_entry' => $zoomArray['mute_upon_entry'] == 1 ? true : false
-            ]
+            'settings' => $options
         ];
 
         if ($cohosts = Request::getArray('co_hosts')) {
@@ -288,9 +346,9 @@ class MeetingsController extends AuthenticatedController {
         }
 
         if (!$meeting->isNew()) {
-            $zoomMeeting = ZoomAPI::updateMeeting($meeting->zoom_meeting_id, $zoomSettings);
+            $zoomMeeting = ZoomAPI::updateMeeting($meeting->zoom_meeting_id, $zoomSettings, $meeting->webinar);
         } else {
-            $zoomMeeting = ZoomAPI::createMeeting($GLOBALS['user']->email, $zoomSettings);
+            $zoomMeeting = ZoomAPI::createMeeting($GLOBALS['user']->email, $zoomSettings, $meeting->webinar);
         }
 
         if ($zoomMeeting != null && $zoomMeeting->id) {
@@ -324,7 +382,7 @@ class MeetingsController extends AuthenticatedController {
         }
 
         $meeting = ZoomMeeting::find($id);
-        if (ZoomAPI::deleteMeeting($meeting->zoom_meeting_id) !== null) {
+        if (ZoomAPI::deleteMeeting($meeting->zoom_meeting_id, $meeting->webinar) !== null) {
 
             if ($meeting->delete()) {
                 PageLayout::postSuccess(dgettext('zoom', 'Das Meeting wurde gelöscht.'));

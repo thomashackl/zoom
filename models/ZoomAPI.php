@@ -36,6 +36,12 @@ class ZoomAPI {
     const MEETING_SCHEDULED = 2;
     const MEETING_RECURRING_NO_FIXED_TIME = 3;
     const MEETING_RECURRING_FIXED_TIME = 8;
+    /*
+     * Webinar types
+     */
+    const WEBINAR_WEBINAR = 5;
+    const WEBINAR_RECURRING_NO_FIXED_TIME = 6;
+    const WEBINAR_RECURRING_FIXED_TIME = 9;
     /**
      * Recurrence types
      */
@@ -75,6 +81,7 @@ class ZoomAPI {
             if ($result['statuscode'] == 200) {
 
                 $user = $result['response'];
+                $cache->write('zoom-user-' . $userId, json_encode($user), self::CACHE_LIFETIME);
 
             // User not found, return a special code.
             } else if ($result['statuscode'] == 404) {
@@ -86,17 +93,44 @@ class ZoomAPI {
                 $user = null;
             }
 
-            if ($user != null) {
-                $cache->write('zoom-user-' . $userId, json_encode($user), 86400);
-            }
-
             return $user;
         }
     }
 
-    public static function getUserPermissions($userId)
+    /**
+     * Get settings for given user (which contain webinar permissions)
+     *
+     * @param string|null $userId
+     * @param string $option empty, or 'meeting_authentication' or 'recording_authentication'
+     *
+     * @return int|mixed|null
+     */
+    public static function getUserSettings($userId = null, $option = null)
     {
-        return self::_call('users/' . $userId . '/permissions');
+        if ($userId == null) {
+            $userId = User::findCurrent()->email;
+        }
+
+        $cache = StudipCacheFactory::getCache();
+
+        if ($option === null && $settings = $cache->read('zoom-usersettings-' . $userId)) {
+            return json_decode($settings);
+        } else {
+            $result = self::_call('users/' . $userId . '/settings',
+                $option !== null ? ['option' => $option] : []);
+
+            if ($result['statuscode'] == 200) {
+                if ($option === null) {
+                    $cache->write('zoom-usersettings-' . $userId,
+                        json_encode($result['response']), self::CACHE_LIFETIME);
+                }
+                return $result['response'];
+            } else if ($result['statuscode'] == 404) {
+                return 404;
+            } else {
+                return null;
+            }
+        }
     }
 
     /**
@@ -122,12 +156,14 @@ class ZoomAPI {
      *
      * @param string $userId settings for the new meeting
      * @param array $settings settings for the new meeting
+     * @param bool $isWebinar is this a regular meeting or a Webinar?
      *
      * @return object|null A meeting object or null if an error occurred.
      */
-    public static function createMeeting($userId, $settings)
+    public static function createMeeting($userId, $settings, $isWebinar = false)
     {
-        $result = self::_call('users/' . $userId . '/meetings', [], $settings, 'POST');
+        $result = self::_call('users/' . $userId . ($isWebinar ? '/webinars' : '/meetings'),
+            [], $settings, 'POST');
 
         if ($result['statuscode'] == 201) {
             $meeting = $result['response'];
@@ -148,12 +184,14 @@ class ZoomAPI {
      *
      * @param $meetingId
      * @param $settings
+     * @param bool $isWebinar is this a regular meeting or a Webinar?
      *
      * @return object|int|null A meeting object, '404' as 'not found' or null if another error occurred.
      */
-    public static function updateMeeting($meetingId, $settings)
+    public static function updateMeeting($meetingId, $settings, $isWebinar = false)
     {
-        $result = self::_call('meetings/' . $meetingId, [], $settings, 'PATCH');
+        $result = self::_call(($isWebinar ? 'webinars/' : 'meetings/') . $meetingId,
+            [], $settings, 'PATCH');
 
         if ($result['statuscode'] == 204) {
             $meeting = new StdClass();
@@ -175,10 +213,11 @@ class ZoomAPI {
      *
      * @param long $meetingId the Zoom meeting ID
      * @param bool $useCache use cached entry if available?
+     * @param bool $isWebinar is this a regular meeting or a Webinar?
+     *
      * @return mixed
-     * @throws Exception
      */
-    public static function getMeeting($meetingId, $useCache = true)
+    public static function getMeeting($meetingId, $useCache = true, $isWebinar = false)
     {
         $cache = StudipCacheFactory::getCache();
 
@@ -192,7 +231,7 @@ class ZoomAPI {
 
             return $meeting;
         } else {
-            $result = self::_call('meetings/' . $meetingId);
+            $result = self::_call(($isWebinar ? 'webinars/' : 'meetings/') . $meetingId);
 
             // Meeting found, all is well.
             if ($result['statuscode'] == 200) {
@@ -221,12 +260,12 @@ class ZoomAPI {
         }
     }
 
-    public static function deleteMeeting($meetingId)
+    public static function deleteMeeting($meetingId, $isWebinar = false)
     {
         $cache = StudipCacheFactory::getCache();
         $cache->expire('zoom-meeting-' . $meetingId);
 
-        $result = self::_call('meetings/' . $meetingId, [], [], 'DELETE');
+        $result = self::_call(($isWebinar ? 'webinars/' : 'meetings/') . $meetingId, [], [], 'DELETE');
 
         if ($result['statuscode'] == 204 || $result['statuscode'] == 404) {
             $response = $meetingId;
@@ -261,10 +300,10 @@ class ZoomAPI {
         // Parameters passed, generate GET query string.
         if (count($query_args) > 0) {
             array_walk($query_args, function (&$value, $index) {
-                $value = $index . '=' . $value;
+                $value = $index . '=' . urlencode($value);
             });
 
-            $url .= '?' . urlencode(implode('&', $query_args));
+            $url .= '?' . implode('&', $query_args);
         }
 
         // Now the real call via CURL
@@ -346,6 +385,71 @@ class ZoomAPI {
                 'name_en' => 'Sunday'
             ]
         ];
+    }
+
+    /**
+     * Get available options in Zoom for configuring a meeting or webinar.
+     * Not all options are provided in Stud.IP.
+     *
+     * @param string $type 'meeting' or 'webinar'
+     *
+     * @return array Configuration options for given type
+     */
+    public static function getRoomSettings($type = 'meeting')
+    {
+        $settings = [
+            'meeting' => [
+                'host_video' => [
+                    'name' => 'host_video',
+                    'label' => dgettext('zoom', 'Video starten, wenn ein Host den Raum betritt'),
+                    'default' => false
+                ],
+                'participant_video' => [
+                    'name' => 'participant_video',
+                    'label' => dgettext('zoom', 'Video starten, wenn ein(e) Teilnehmer(in) den Raum betritt'),
+                    'default' => false
+                ],
+                'join_before_host' => [
+                    'name' => 'join_before_host',
+                    'label' => dgettext('zoom', 'Teilnehmende dürfen den Raum vor dem Host betreten'),
+                    'default' => false
+                ],
+                'mute_upon_entry' => [
+                    'name' => 'mute_upon_entry',
+                    'label' => dgettext('zoom', 'Teilnehmende beim Betreten automatisch stumm schalten'),
+                    'default' => true
+                ],
+                'waiting_room' => [
+                    'name' => 'waiting_room',
+                    'label' => dgettext('zoom', 'Warteraum aktivieren'),
+                    'default' => false
+                ],
+                'enforce_login' => [
+                    'name' => 'enforce_login',
+                    'label' => dgettext('zoom', 'Nur angemeldete Nutzer dürfen teilnehmen (keine Gäste)'),
+                    'default' => false
+                ]
+            ],
+            'webinar' => [
+                'host_video' => [
+                    'name' => 'host_video',
+                    'label' => dgettext('zoom', 'Video starten, wenn ein Host den Raum betritt'),
+                    'default' => false
+                ],
+                'panelists_video' => [
+                    'name' => 'panelists_video',
+                    'label' => dgettext('zoom', 'Video starten, wenn ein(e) Teilnehmer(in) den Raum betritt'),
+                    'default' => false
+                ],
+                'meeting_authentication' => [
+                    'name' => 'meeting_authentication',
+                    'label' => dgettext('zoom', 'Nur angemeldete Nutzer dürfen teilnehmen (keine Gäste)'),
+                    'default' => false
+                ]
+            ]
+        ];
+
+        return $settings[$type];
     }
 
 }

@@ -1,3 +1,17 @@
+<?php if ($need_license) : ?>
+    <?php echo MessageBox::warning(sprintf(dgettext('zoom',
+        'Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit regulären ' .
+        'Zoom-Meetings abgedeckt werden kann. Um eine Freischaltung zur Erstellung größerer Webinare zu bekommen, ' .
+        'wenden Sie sich bitte an den <a href="mailto:%2$s">ZIM-Support</a>.'),
+        ZoomAPI::MAX_MEETING_MEMBERS, $GLOBALS['UNI_CONTACT'])) ?>
+<?php endif ?>
+<?php if ($need_larger_license) : ?>
+    <?php echo MessageBox::warning(sprintf(dgettext('zoom',
+        'Ihre Veranstaltung hat %1$u Teilnehmende, was nicht mit Ihrer freigeschalteten Webinarlizenz ' .
+        '(bis %2$u Personen) abgedeckt werden kann. Um eine Freischaltung zur Erstellung größerer Webinare zu ' .
+        'bekommen, wenden Sie sich bitte an den <a href="mailto:%3$s">ZIM-Support</a>.'),
+        $turnout, $max_turnout, $GLOBALS['UNI_CONTACT'])) ?>
+<?php endif ?>
 <?php if (count($meetings) == 0) : ?>
     <?php echo MessageBox::info(
         dgettext('zoom', 'Es wurden keine Zoom-Meetings für diese Veranstaltung gefunden.')) ?>
