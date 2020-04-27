@@ -134,6 +134,36 @@ class ZoomAPI {
     }
 
     /**
+     * Get all meetings for the given user.
+     *
+     * @param string|null $userId the user to check. Defaults to the current user.
+     * @return array
+     */
+    public static function getUserMeetings($userId = null)
+    {
+        if ($userId == null) {
+            $userId = User::findCurrent()->email;
+        }
+
+        $cache = StudipCacheFactory::getCache();
+
+        if ($meetings = $cache->read('zoom-user-meetings-' . $userId)) {
+            return json_decode($meetings);
+        } else {
+            $result = self::_call('users/' . $userId . '/meetings', ['page_size' => 50]);
+
+            if ($result['statuscode'] == 200) {
+                $cache->write('zoom-user-meetings-' . $userId,
+                    json_encode($result['response']->meetings), self::CACHE_LIFETIME);
+                return $result['response']->meetings;
+            } else {
+                return [];
+            }
+        }
+
+    }
+
+    /**
      * Checks if the given userIds exist as Zoom users.
      *
      * @param array $userIds Stud.IP Users

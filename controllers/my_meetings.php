@@ -43,17 +43,17 @@ class MyMeetingsController extends AuthenticatedController {
         // Navigation handling.
         Navigation::activateItem('/browse/zoom');
 
-        $me = User::findCurrent();
+        $this->me = User::findCurrent();
 
         // Get selected semester.
         $semesterId = Request::option('semester', 'current') ?:
-            (UserConfig::get($me->id)->SELECTED_SEMESTER_ZOOM ?: 'current');
+            (UserConfig::get($this->me->id)->SELECTED_SEMESTER_ZOOM ?: 'current');
         $this->semester = $semesterId === 'current' ? Semester::findCurrent() : Semester::find($semesterId);
 
         PageLayout::setTitle(dgettext('zoom', 'Meine Zoom-Meetings'));
 
         if (($chosen = Request::option('semester', null)) !== null) {
-            UserConfig::get($me->id)->store('SELECTED_SEMESTER_ZOOM', $chosen);
+            UserConfig::get($this->me->id)->store('SELECTED_SEMESTER_ZOOM', $chosen);
         }
 
         $sql = "SELECT DISTINCT s.`Seminar_id`, s.`VeranstaltungsNummer`, s.`Name` FROM `seminar_user` u
@@ -78,28 +78,18 @@ class MyMeetingsController extends AuthenticatedController {
 
         $myCourses = DBManager::get()->fetchFirst($sql,
             [
-                'me' => $me->id,
+                'me' => $this->me->id,
                 'start' => $this->semester->beginn,
                 'end' => $this->semester->ende
             ]);
 
-        $meetings = ZoomMeeting::findBySQL("`course_id` IN (:courses)", ['courses' => $myCourses]);
+        $this->meetings = ZoomMeeting::findBySQL("`course_id` IN (:courses)", ['courses' => $myCourses]);
 
         // Sort meetings by date, showing next meetings first.
-        usort($meetings, function($a, $b) {
+        usort($this->meetings, function($a, $b) {
             return $a->zoom_settings->start_time == $b->zoom_settings->start_time ? 0 :
                 ($a->zoom_settings->start_time < $b->zoom_settings->start_time) ? -1 : 1;
         });
-
-        $this->host = [];
-        $this->participant = [];
-        foreach ($meetings as $m) {
-            if ($m->isHost($me)) {
-                $this->host[] = $m;
-            } else {
-                $this->participant[] = $m;
-            }
-        }
 
         $sidebar = Sidebar::get();
 
