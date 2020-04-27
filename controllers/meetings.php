@@ -55,7 +55,9 @@ class MeetingsController extends AuthenticatedController {
             }
         });
 
-        if ($GLOBALS['perm']->have_studip_perm('dozent', $this->course->id)) {
+
+        $neededPerm = in_array($this->course->status, studygroup_sem_types()) ? 'tutor' : 'dozent';
+        if ($GLOBALS['perm']->have_studip_perm($neededPerm, $this->course->id)) {
             $me = ZoomAPI::getUser();
             if ($me === 404) {
                 PageLayout::postWarning(
@@ -107,7 +109,9 @@ class MeetingsController extends AuthenticatedController {
      */
     public function edit_action($id = 0)
     {
-        if (!$GLOBALS['perm']->have_studip_perm('dozent', $this->course->id)) {
+        // In studygroups, author permissions are sufficient.
+        $neededPerm = in_array($this->course->status, studygroup_sem_types()) ? 'tutor' : 'dozent';
+        if (!$GLOBALS['perm']->have_studip_perm($neededPerm, $this->course->id)) {
             throw new AccessDeniedException();
         }
 
@@ -118,13 +122,19 @@ class MeetingsController extends AuthenticatedController {
             PluginEngine::getURL($this, [], 'meetings')));
         Navigation::activateItem('/course/zoom/edit');
 
+        $this->my_meetings = Request::int('my', 0);
+
         $this->user = ZoomAPI::getUser();
 
         // Get other users who are lecturers in this course.
         $this->otherLecturers = SimpleCollection::createFromArray(
             CourseMember::findBySQL(
-                "`Seminar_id` = :course AND `user_id` != :me AND `status` = 'dozent' ORDER BY `position`",
-                ['course' => $this->course->id, 'me' => $GLOBALS['user']->id]
+                "`Seminar_id` = :course AND `user_id` != :me AND `status` IN (:perms) ORDER BY `position`",
+                [
+                    'course' => $this->course->id,
+                    'me' => $GLOBALS['user']->id,
+                    'perms' => in_array($this->course->status, studygroup_sem_types()) ? ['tutor', 'dozent'] : ['dozent']
+                ]
             )
         );
 
@@ -167,18 +177,23 @@ class MeetingsController extends AuthenticatedController {
                         dgettext('zoom','Das Meeting ist nicht mehr in Zoom vorhanden, ' .
                             'konnte aber nicht automatisch in Stud.IP gelöscht werden.'));
                 }
-                $this->relocate('meetings');
+                $this->relocate(Request::int('my', 0) == 1 ? 'my_meetings' : 'meetings');
             }
 
         } else {
+            // Create a new meeting object.
             $this->meeting = new ZoomMeeting();
 
+            // mode 'coursedates' can only be set if the current course has dates.
             $this->meeting->type = $this->dateCount > 0 ? 'coursedates' : 'manual';
+            // Check for turnout.
             $this->meeting->webinar = $this->turnout <= ZoomAPI::MAX_MEETING_MEMBERS ? 0 : 1;
 
+            // Set meeting start to next hour per default.
             $nextHour = new DateTime('now +1 hour', new DateTimeZone(ZoomAPI::LOCAL_TIMEZONE));
             $nextHour->setTime($nextHour->format('H'), 0, 0);
 
+            // Create some default zoom settings.
             $settings = new StdClass();
             $settings->topic = $this->course->getFullname();
             $settings->start_time = $nextHour;
@@ -206,7 +221,9 @@ class MeetingsController extends AuthenticatedController {
      */
     public function store_action()
     {
-        if (!$GLOBALS['perm']->have_studip_perm('dozent', $this->course->id)) {
+        // In studygroups, author permissions are sufficient.
+        $neededPerm = in_array($this->course->status, studygroup_sem_types()) ? 'tutor' : 'dozent';
+        if (!$GLOBALS['perm']->have_studip_perm($neededPerm, $this->course->id)) {
             throw new AccessDeniedException();
         }
 
@@ -237,7 +254,7 @@ class MeetingsController extends AuthenticatedController {
                     throw new AccessDeniedException(sprintf(dgettext('zoom',
                         'Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit regulären ' .
                         'Zoom-Meetings abgedeckt werden kann. Um eine Freischaltung zur Erstellung größerer '.
-                        'Webinare zu bekommen, wenden Sie sich bitte an den <a href="mailto:%2$s">ZIM-Support</a>.'),
+                        'Webinare zu bekommen, wenden Sie sich bitte an <a href="mailto:%2$s">%2$s</a>.'),
                         ZoomAPI::MAX_MEETING_MEMBERS, $GLOBALS['UNI_CONTACT']));
                 }
             } else {
@@ -367,7 +384,7 @@ class MeetingsController extends AuthenticatedController {
 
         }
 
-        $this->relocate('meetings');
+        $this->relocate(Request::int('my', 0) == 1 ? 'my_meetings' : 'meetings');
     }
 
     /**
@@ -377,9 +394,13 @@ class MeetingsController extends AuthenticatedController {
      */
     public function delete_action($id)
     {
-        if (!$GLOBALS['perm']->have_studip_perm('dozent', $this->course->id)) {
+        // In studygroups, author permissions are sufficient.
+        $neededPerm = in_array($this->course->status, studygroup_sem_types()) ? 'tutor' : 'dozent';
+        if (!$GLOBALS['perm']->have_studip_perm($neededPerm, $this->course->id)) {
             throw new AccessDeniedException();
         }
+
+        $this->my_meetings = Request::int('my', 0);
 
         $meeting = ZoomMeeting::find($id);
         if (ZoomAPI::deleteMeeting($meeting->zoom_meeting_id, $meeting->webinar) !== null) {
@@ -394,7 +415,7 @@ class MeetingsController extends AuthenticatedController {
             PageLayout::postError(dgettext('zoom', 'Das Meeting konnte nicht in Zoom gelöscht werden.'));
         }
 
-        $this->relocate('meetings');
+        $this->relocate(Request::int('my', 0) == 1 ? 'my_meetings' : 'meetings');
     }
 
     /**

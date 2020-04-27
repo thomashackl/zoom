@@ -170,6 +170,7 @@
         <?php if (!$meeting->isNew()) : ?>
             <input type="hidden" name="meeting_id" value="<?php echo $meeting->id ?>">
         <?php endif ?>
+        <input type="hidden" name="my" value="<?php echo $my_meetings ?>">
         <?= CSRFProtection::tokenTag() ?>
         <?= Studip\Button::createAccept(_('Speichern'), 'store') ?>
         <?= Studip\LinkButton::createCancel(_('Abbrechen'), $controller->link_for('meetings'),

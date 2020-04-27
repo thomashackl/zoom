@@ -4,21 +4,19 @@ table.default {
       td {
         vertical-align: top;
 
+        img {
+          vertical-align: middle;
+        }
+
         div.join-meeting {
           font-size: x-large;
           margin: 10px;
           padding: 5px;
           text-align: center;
           width: 100%;
-
-          a {
-            img {
-              vertical-align: middle;
-            }
-          }
         }
 
-        &:last-child {
+        &:last-child:not(.join-meeting) {
           text-align: right;
         }
       }

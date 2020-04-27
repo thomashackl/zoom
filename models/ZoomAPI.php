@@ -144,8 +144,12 @@ class ZoomAPI {
         $existing = [];
 
         foreach ($users as $one) {
-            $user = self::getUser($one->email);
-            $existing[$one->user_id] = ($user !== 404 && $user !== null);
+            if ($one->email) {
+                $user = self::getUser($one->email);
+                $existing[$one->user_id] = ($user !== 404 && $user !== null);
+            } else {
+                $existing[$one->user_id] = false;
+            }
         }
 
         return $existing;

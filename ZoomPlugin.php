@@ -14,7 +14,7 @@
  * @category    Zoom
  */
 
-class ZoomPlugin extends StudIPPlugin implements StandardPlugin {
+class ZoomPlugin extends StudIPPlugin implements StandardPlugin, SystemPlugin {
 
     public function __construct() {
         parent::__construct();
@@ -23,6 +23,12 @@ class ZoomPlugin extends StudIPPlugin implements StandardPlugin {
 
         // Localization
         bindtextdomain('zoom', realpath(__DIR__.'/locale'));
+
+        if (Navigation::hasItem('/browse')) {
+            $navigation = new Navigation(dgettext('zoom', 'Meine Zoom-Meetings'),
+                PluginEngine::getURL($this, [], 'my_meetings'));
+            Navigation::addItem('/browse/zoom', $navigation);
+        }
     }
 
     /**

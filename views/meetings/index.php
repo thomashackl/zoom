@@ -2,14 +2,14 @@
     <?php echo MessageBox::warning(sprintf(dgettext('zoom',
         'Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit regulären ' .
         'Zoom-Meetings abgedeckt werden kann. Um eine Freischaltung zur Erstellung größerer Webinare zu bekommen, ' .
-        'wenden Sie sich bitte an den <a href="mailto:%2$s">ZIM-Support</a>.'),
+        'wenden Sie sich bitte an <a href="mailto:%2$s">%2$s</a>.'),
         ZoomAPI::MAX_MEETING_MEMBERS, $GLOBALS['UNI_CONTACT'])) ?>
 <?php endif ?>
 <?php if ($need_larger_license) : ?>
     <?php echo MessageBox::warning(sprintf(dgettext('zoom',
         'Ihre Veranstaltung hat %1$u Teilnehmende, was nicht mit Ihrer freigeschalteten Webinarlizenz ' .
         '(bis %2$u Personen) abgedeckt werden kann. Um eine Freischaltung zur Erstellung größerer Webinare zu ' .
-        'bekommen, wenden Sie sich bitte an den <a href="mailto:%3$s">ZIM-Support</a>.'),
+        'bekommen, wenden Sie sich bitte an <a href="mailto:%3$s">%3$s</a>.'),
         $turnout, $max_turnout, $GLOBALS['UNI_CONTACT'])) ?>
 <?php endif ?>
 <?php if (count($meetings) == 0) : ?>
@@ -40,7 +40,8 @@
                     <td>
                         <?php echo htmlReady($meeting->zoom_settings->topic) ?>
                         <br>
-                        <?php echo sprintf(dgettext('zoom', 'Nächster Termin: %s'), htmlReady($meeting->zoom_settings->start_time->format('d.m.Y H:i'))) ?>
+                        <?php echo sprintf(dgettext('zoom', 'Nächster Termin: %s'),
+                            htmlReady($meeting->zoom_settings->start_time->format('d.m.Y H:i'))) ?>
                         <div class="join-meeting">
                             <a href="<?php echo $controller->link_for('meetings/join', $meeting->id) ?>" target="_blank">
                                 <?php echo Icon::create('door-enter')->asImg(48) ?>
