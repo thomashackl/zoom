@@ -47,7 +47,19 @@ class ZoomPlugin extends StudIPPlugin implements StandardPlugin, SystemPlugin {
 
     public function getIconNavigation($course_id, $last_visit, $user_id)
     {
-        return null;
+        $num_entries = 0;
+        $text = $this->getDisplayName();
+
+        $navigation = new Navigation('zoom', PluginEngine::getURL($this, [], 'meetings'));
+        $navigation->setBadgeNumber($num_entries);
+
+        if ($num_entries > 0) {
+            $navigation->setImage(Icon::create('video+new', 'attention', ["title" => $text]));
+        } else {
+            $navigation->setImage(Icon::create('video', 'inactive', ["title" => $text]));
+        }
+
+        return $navigation;
     }
 
     public function getTabNavigation($course_id)
