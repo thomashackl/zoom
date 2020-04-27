@@ -1,3 +1,4 @@
+<h1><?php echo $semester->name ?></h1>
 <?php if (count($host) < 1 && count($participant) < 1) : ?>
     <?php echo MessageBox::info(
         dgettext('zoom', 'Es wurden keine Meetings in Ihren Veranstaltungen gefunden.')) ?>

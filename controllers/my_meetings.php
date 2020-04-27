@@ -42,14 +42,15 @@ class MyMeetingsController extends AuthenticatedController {
     {
         // Navigation handling.
         Navigation::activateItem('/browse/zoom');
-        PageLayout::setTitle(dgettext('zoom', 'Meine Zoom-Meetings'));
 
         $me = User::findCurrent();
 
         // Get selected semester.
         $semesterId = Request::option('semester', 'current') ?:
             (UserConfig::get($me->id)->SELECTED_SEMESTER_ZOOM ?: 'current');
-        $semester = $semesterId === 'current' ? Semester::findCurrent() : Semester::find($semesterId);
+        $this->semester = $semesterId === 'current' ? Semester::findCurrent() : Semester::find($semesterId);
+
+        PageLayout::setTitle(dgettext('zoom', 'Meine Zoom-Meetings'));
 
         if (($chosen = Request::option('semester', null)) !== null) {
             UserConfig::get($me->id)->store('SELECTED_SEMESTER_ZOOM', $chosen);
@@ -78,15 +79,16 @@ class MyMeetingsController extends AuthenticatedController {
         $myCourses = DBManager::get()->fetchFirst($sql,
             [
                 'me' => $me->id,
-                'start' => $semester->beginn,
-                'end' => $semester->ende
+                'start' => $this->semester->beginn,
+                'end' => $this->semester->ende
             ]);
 
         $meetings = ZoomMeeting::findBySQL("`course_id` IN (:courses)", ['courses' => $myCourses]);
 
         // Sort meetings by date, showing next meetings first.
         usort($meetings, function($a, $b) {
-            return $b->zoom_settings->start_time - $a->zoom_settings->start_time;
+            return $a->zoom_settings->start_time == $b->zoom_settings->start_time ? 0 :
+                ($a->zoom_settings->start_time < $b->zoom_settings->start_time) ? -1 : 1;
         });
 
         $this->host = [];
@@ -105,15 +107,15 @@ class MyMeetingsController extends AuthenticatedController {
             $this->link_for('my_meetings'), 'semester');
         $widget->setMaxLength(50);
         $widget->addElement(new SelectElement('current', dgettext('zoom', 'Aktuelles Semester'),
-            $semester->id == 'current'));
+            $this->semester->id == 'current'));
 
         $semesters = Semester::getAll();
         if (!empty($semesters)) {
             $group = new SelectGroupElement(dgettext('zoom', 'Semester auswählen'));
             foreach ($semesters as $one) {
-                if ($semester->visible) {
+                if ($this->semester->visible) {
                     $group->addElement(new SelectElement($one->id, $one->name,
-                        $semesterId !== 'current' && $semester->id == $one->id));
+                        $semesterId !== 'current' && $this->semester->id == $one->id));
                 }
             }
             $widget->addElement($group);
