@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-27 17:31+0200\n"
-"PO-Revision-Date: 2020-04-27 17:33+0200\n"
+"POT-Creation-Date: 2020-04-27 19:35+0200\n"
+"PO-Revision-Date: 2020-04-27 19:38+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -17,75 +17,76 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.3\n"
 
-#: models/ZoomAPI.php:358
+#: models/ZoomAPI.php:411
 msgid "Montag"
 msgstr "Monday"
 
-#: models/ZoomAPI.php:363
+#: models/ZoomAPI.php:416
 msgid "Dienstag"
 msgstr "Tuesday"
 
-#: models/ZoomAPI.php:368
+#: models/ZoomAPI.php:421
 msgid "Mittwoch"
 msgstr "Wednesday"
 
-#: models/ZoomAPI.php:373
+#: models/ZoomAPI.php:426
 msgid "Donnerstag"
 msgstr "Thursday"
 
-#: models/ZoomAPI.php:378
+#: models/ZoomAPI.php:431
 msgid "Freitag"
 msgstr "Friday"
 
-#: models/ZoomAPI.php:383
+#: models/ZoomAPI.php:436
 msgid "Samstag"
 msgstr "Saturday"
 
-#: models/ZoomAPI.php:388
+#: models/ZoomAPI.php:441
 msgid "Sonntag"
 msgstr "Sunday"
 
-#: models/ZoomAPI.php:408 models/ZoomAPI.php:440
+#: models/ZoomAPI.php:461 models/ZoomAPI.php:493
 msgid "Video starten, wenn ein Host den Raum betritt"
 msgstr "Autostart host video"
 
-#: models/ZoomAPI.php:413 models/ZoomAPI.php:445
+#: models/ZoomAPI.php:466 models/ZoomAPI.php:498
 msgid "Video starten, wenn ein(e) Teilnehmer(in) den Raum betritt"
 msgstr "Autostart participant video"
 
-#: models/ZoomAPI.php:418
+#: models/ZoomAPI.php:471
 msgid "Teilnehmende dürfen den Raum vor dem Host betreten"
 msgstr "Participants may join room before host"
 
-#: models/ZoomAPI.php:423
+#: models/ZoomAPI.php:476
 msgid "Teilnehmende beim Betreten automatisch stumm schalten"
 msgstr "Automatically mute participants on entry"
 
-#: models/ZoomAPI.php:428
+#: models/ZoomAPI.php:481
 msgid "Warteraum aktivieren"
 msgstr "Enable waiting room"
 
-#: models/ZoomAPI.php:433 models/ZoomAPI.php:450
+#: models/ZoomAPI.php:486 models/ZoomAPI.php:503
 msgid "Nur angemeldete Nutzer dürfen teilnehmen (keine Gäste)"
 msgstr "Only registered participants may join (no guests)"
 
-#: controllers/my_meetings.php:45 ZoomPlugin.php:28
+#: controllers/my_meetings.php:53 views/my_meetings/index.php:8
+#: ZoomPlugin.php:28
 msgid "Meine Zoom-Meetings"
 msgstr "My Zoom meetings"
 
-#: controllers/my_meetings.php:104
+#: controllers/my_meetings.php:96
 msgid "Semesterfilter"
 msgstr "Semester filter"
 
-#: controllers/my_meetings.php:107
+#: controllers/my_meetings.php:99
 msgid "Aktuelles Semester"
 msgstr "Current semester"
 
-#: controllers/my_meetings.php:112
+#: controllers/my_meetings.php:104
 msgid "Semester auswählen"
 msgstr "Choose semester"
 
-#: controllers/meetings.php:47 ZoomPlugin.php:60
+#: controllers/meetings.php:47 ZoomPlugin.php:72
 msgid "Meetings"
 msgstr "Meetings"
 
@@ -105,15 +106,19 @@ msgstr ""
 msgid "Meeting erstellen"
 msgstr "Create meeting"
 
-#: controllers/meetings.php:120
+#: controllers/meetings.php:98
+msgid "Meeting aus Zoom importieren"
+msgstr "Import meeting from Zoom"
+
+#: controllers/meetings.php:123
 msgid "Zoom-Meeting anlegen"
 msgstr "Create Zoom meeting"
 
-#: controllers/meetings.php:121
+#: controllers/meetings.php:124
 msgid "Zoom-Meeting bearbeiten"
 msgstr "Edit Zoom meeting"
 
-#: controllers/meetings.php:173
+#: controllers/meetings.php:176
 msgid ""
 "Das Meeting ist nicht mehr in Zoom vorhanden und wurde daher auch in Stud.IP "
 "gelöscht."
@@ -121,7 +126,7 @@ msgstr ""
 "The meeting couldn’t be found in Zoom and was automatically deleted in Stud."
 "IP."
 
-#: controllers/meetings.php:177
+#: controllers/meetings.php:180
 msgid ""
 "Das Meeting ist nicht mehr in Zoom vorhanden, konnte aber nicht automatisch "
 "in Stud.IP gelöscht werden."
@@ -129,7 +134,7 @@ msgstr ""
 "The meeting couldn’t be found in Zoom but could not be automatically deleted "
 "in Stud.IP."
 
-#: controllers/meetings.php:255 views/meetings/index.php:3
+#: controllers/meetings.php:258 views/meetings/index.php:3
 #, php-format
 msgid ""
 "Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit "
@@ -141,15 +146,15 @@ msgstr ""
 "regular Zoom meetings. In order to get a license for larger Webinars, please "
 "contact <a href=\"mailto:%2$s\">%2$s</a>."
 
-#: controllers/meetings.php:375
+#: controllers/meetings.php:378
 msgid "Das Meeting wurde gespeichert."
 msgstr "The meeting has been saved."
 
-#: controllers/meetings.php:377
+#: controllers/meetings.php:380
 msgid "Das Meeting kann nicht gespeichert werden."
 msgstr "The meeting could not be saved."
 
-#: controllers/meetings.php:383
+#: controllers/meetings.php:386
 msgid ""
 "Das Meeting kann nicht gespeichert werden, da die Daten nicht an Zoom "
 "übertragen werden konnten."
@@ -157,17 +162,71 @@ msgstr ""
 "The meeting could not be saved because the settings could not be transferred "
 "to Zoom."
 
-#: controllers/meetings.php:409
+#: controllers/meetings.php:412
 msgid "Das Meeting wurde gelöscht."
 msgstr "The meeting has been deleted."
 
-#: controllers/meetings.php:411
+#: controllers/meetings.php:414
 msgid "Das Meeting konnte nicht aus Stud.IP gelöscht werden."
 msgstr "The meeting could not be deleted in Stud.IP."
 
-#: controllers/meetings.php:415
+#: controllers/meetings.php:418
 msgid "Das Meeting konnte nicht in Zoom gelöscht werden."
 msgstr "The meeting could not be deleted in Zoom."
+
+#: controllers/meetings.php:453
+msgid "Es wurde keine ID angegeben."
+msgstr "No ID has been given."
+
+#: controllers/meetings.php:463
+msgid ""
+"Das Meeting mit der angegebenen ID ist bereits einer Stud.IP-Veranstaltung "
+"zugeordnet."
+msgstr ""
+"The meeting with the given ID is already connected to a Stud.IP course."
+
+#: controllers/meetings.php:471
+msgid ""
+"Das Meeting mit der angegebenen ID konnte nicht in Zoom gefunden werden."
+msgstr "The meeting could not be deleted in Zoom."
+
+#: controllers/meetings.php:477
+msgid "Die Daten des Meetings konnten nicht aus Zoom ausgelesen werden."
+msgstr "The meeting could not be deleted in Zoom."
+
+#: controllers/meetings.php:498
+msgid "Das Meeting wurde erfolgreich importiert."
+msgstr "The meeting has been saved."
+
+#: controllers/meetings.php:500
+msgid "Das Meeting konnte nicht importiert werden."
+msgstr "The meeting could not be saved."
+
+#: views/meetings/import.php:4
+msgid "Importieren sie ein bestehendes Meeting aus Zoom"
+msgstr "Import a meeting from Zoom"
+
+#: views/meetings/import.php:8
+msgid "Zoom-Meeting-ID"
+msgstr "My Zoom meetings"
+
+#: views/meetings/import.php:13
+msgid ""
+"Hier können Sie ein bereits in Zoom angelegtes Meeting Ihrer Stud.IP-"
+"Veranstaltung zuordnen, indem Sie die Zoom-Meeting-ID eingeben.<br>Diese ID "
+"finden Sie in der Liste Ihrer Meetings in Zoom."
+msgstr ""
+"You can import an existing meeting from Zoom into youre Stud.IP course by "
+"specifying the Zoom meeting ID.<br>You can find this ID in the list of your "
+"meetings in Zoom."
+
+#: views/meetings/import.php:21 views/meetings/edit.php:175
+msgid "Speichern"
+msgstr "Save"
+
+#: views/meetings/import.php:22 views/meetings/edit.php:176
+msgid "Abbrechen"
+msgstr "Cancel"
 
 #: views/meetings/index.php:10
 #, php-format
@@ -194,21 +253,21 @@ msgstr "Zoom meetings for this course"
 msgid "Titel"
 msgstr "Topic"
 
-#: views/meetings/index.php:33 views/my_meetings/_group.php:16
+#: views/meetings/index.php:33 views/my_meetings/index.php:18
 msgid "Aktionen"
 msgstr "Actions"
 
-#: views/meetings/index.php:43 views/my_meetings/_group.php:30
+#: views/meetings/index.php:43 views/my_meetings/index.php:31
 #, php-format
 msgid "Nächster Termin: %s"
 msgstr "Next appointment: %s"
 
-#: views/meetings/index.php:48 views/my_meetings/_group.php:35
-#: views/my_meetings/_group.php:37
+#: views/meetings/index.php:48 views/my_meetings/index.php:36
+#: views/my_meetings/index.php:38
 msgid "Teilnehmen"
 msgstr "Join"
 
-#: views/meetings/index.php:57 views/my_meetings/_group.php:49
+#: views/meetings/index.php:57 views/my_meetings/index.php:53
 msgid "Soll das Meeting wirklich gelöscht werden?"
 msgstr "Really delete this meeting?"
 
@@ -315,55 +374,39 @@ msgstr ""
 msgid "Zoom-Einstellungen"
 msgstr "Zoom settings"
 
-#: views/meetings/edit.php:175
-msgid "Speichern"
-msgstr "Save"
-
-#: views/meetings/edit.php:176
-msgid "Abbrechen"
-msgstr "Cancel"
-
-#: views/my_meetings/index.php:3
+#: views/my_meetings/index.php:4
 msgid "Es wurden keine Meetings in Ihren Veranstaltungen gefunden."
 msgstr "There are no meetings for this course yet."
 
-#: views/my_meetings/index.php:7
-msgid "Meine Zoom-Meetings (hier bin ich Host oder Co-Host)"
-msgstr "My Zoom meetings (where I am Host or Co-Host)"
-
-#: views/my_meetings/index.php:14
-msgid "Zoom-Meetings in meinen Veranstaltungen (hier kann ich teilnehmen)"
-msgstr "Zoom meetings in my courses (where I can join as participant)"
-
-#: views/my_meetings/_group.php:12
+#: views/my_meetings/index.php:16
 msgid "Veranstaltung"
 msgstr "Course"
 
-#: views/my_meetings/_group.php:13
+#: views/my_meetings/index.php:17
 msgid "Meeting"
 msgstr "Meeting"
 
-#: views/my_meetings/_group.php:23
+#: views/my_meetings/index.php:24
 msgid "Zur Veranstaltung"
 msgstr "To course"
 
-#: views/my_meetings/_group.php:43
+#: views/my_meetings/index.php:45
 msgid "Bearbeiten"
 msgstr "Edit"
 
-#: views/my_meetings/_group.php:48
-msgid "Starten"
-msgstr "Start"
+#: views/my_meetings/index.php:51
+msgid "Löschen"
+msgstr "Delete"
 
 #: ZoomPlugin.php:39
 msgid "Zoom"
 msgstr "Zoom"
 
-#: ZoomPlugin.php:72
+#: ZoomPlugin.php:84
 msgid "Anlegen und Verwalten von Zoom-Meetings"
 msgstr "Zoom meeting creation and administration"
 
-#: ZoomPlugin.php:73
+#: ZoomPlugin.php:85
 msgid ""
 "Legen Sie Zoom-Meetingräume an, terminieren und verwalten Sie diese, laden "
 "Sie Teilnehmende ein."
@@ -371,7 +414,7 @@ msgstr ""
 "Create Zoom meeting rooms, specify dates and settings and let your "
 "participants join."
 
-#: ZoomPlugin.php:74
+#: ZoomPlugin.php:86
 msgid "Lehr- und Lernorganisation"
 msgstr ""
 
@@ -390,3 +433,12 @@ msgstr ""
 #: ZoomMeetingDateCronjob.php:38
 msgid "Sollen Ausgaben erzeugt werden?"
 msgstr "Show output?"
+
+#~ msgid "Meine Zoom-Meetings (hier bin ich Host oder Co-Host)"
+#~ msgstr "My Zoom meetings (where I am Host or Co-Host)"
+
+#~ msgid "Zoom-Meetings in meinen Veranstaltungen (hier kann ich teilnehmen)"
+#~ msgstr "Zoom meetings in my courses (where I can join as participant)"
+
+#~ msgid "Starten"
+#~ msgstr "Start"
