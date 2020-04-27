@@ -98,6 +98,29 @@ class ZoomAPI {
     }
 
     /**
+     * Gets a single user's data, specified by Zoom ID.
+     * We expect to find the given user, so no checks are done.
+     *
+     * @param null $userId the user to check
+     * @return mixed
+     * @throws Exception
+     */
+    public static function getUserByZoomId($zoomId) {
+        $cache = StudipCacheFactory::getCache();
+
+        if ($user = $cache->read('zoom-user-' . $zoomId)) {
+            return json_decode($user);
+        } else {
+            $result = self::_call('users/' . $zoomId);
+
+            $user = $result['response'];
+            $cache->write('zoom-user-' . $zoomId, json_encode($user), self::CACHE_LIFETIME);
+
+            return $user;
+        }
+    }
+
+    /**
      * Get settings for given user (which contain webinar permissions)
      *
      * @param string|null $userId

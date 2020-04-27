@@ -95,6 +95,9 @@ class MeetingsController extends AuthenticatedController {
                     $actions->addLink(dgettext('zoom', 'Meeting erstellen'),
                         $this->link_for('meetings/edit'),
                         Icon::create('add'))->asDialog('size="auto"');
+                    $actions->addLink(dgettext('zoom', 'Meeting aus Zoom importieren'),
+                        $this->link_for('meetings/import'),
+                        Icon::create('install'))->asDialog('size="auto"');
                     $sidebar->addWidget($actions);
                 }
             }
@@ -416,6 +419,91 @@ class MeetingsController extends AuthenticatedController {
         }
 
         $this->relocate(Request::int('my', 0) == 1 ? 'my_meetings' : 'meetings');
+    }
+
+    /**
+     * Shows a dialog for importing an existing Zoom meeting into
+     * Stud.IP and assigning it to the current course.
+     */
+    public function import_action()
+    {
+        // In studygroups, author permissions are sufficient.
+        $neededPerm = in_array($this->course->status, studygroup_sem_types()) ? 'tutor' : 'dozent';
+        if (!$GLOBALS['perm']->have_studip_perm($neededPerm, $this->course->id)) {
+            throw new AccessDeniedException();
+        }
+    }
+
+    /**
+     * Tries to import the given Zoom meeting ID.
+     * If the meeting ID is not found in Zoom, an error message is shown.
+     * If the meeting already exists in Stud.IP, a warning is shown.
+     * Otherwise, a new ZoomMeeting object is created and stored to database.
+     */
+    public function do_import_action()
+    {
+        // In studygroups, author permissions are sufficient.
+        $neededPerm = in_array($this->course->status, studygroup_sem_types()) ? 'tutor' : 'dozent';
+        if (!$GLOBALS['perm']->have_studip_perm($neededPerm, $this->course->id)) {
+            throw new AccessDeniedException();
+        }
+
+        $zoomId = Request::get('zoom_id', '');
+        if ($zoomId == '') {
+            PageLayout::postError(dgettext('zoom', 'Es wurde keine ID angegeben.'));
+            $this->relocate('meetings');
+        } else {
+            // Clear hyphens if necessary.
+            $zoomId = str_replace('-', '', trim($zoomId));
+
+            // First of all, check if the given meeting is already present.
+            $studip = ZoomMeeting::findByZoom_meeting_id($zoomId);
+
+            if (count($studip) > 0) {
+                PageLayout::postWarning(dgettext('zoom', 'Das Meeting mit der angegebenen ID ist '.
+                    'bereits einer Stud.IP-Veranstaltung zugeordnet.'));
+                $this->relocate('meetings');
+            } else {
+                $data = ZoomAPI::getMeeting($zoomId);
+
+                // Meeting with the given ID not found in Zoom.
+                if ($data === 404) {
+                    PageLayout::postError(dgettext('zoom', 'Das Meeting mit der angegebenen ID '.
+                        'konnte nicht in Zoom gefunden werden.'));
+                    $this->relocate('meetings');
+
+                // Some error occurred on API call.
+                } else if ($data === null) {
+                    PageLayout::postError(dgettext('zoom', 'Die Daten des Meetings konnten nicht '.
+                        'aus Zoom ausgelesen werden.'));
+                    $this->relocate('meetings');
+
+                // We have a meeting here, import it.
+                } else {
+                    $meeting = new ZoomMeeting();
+
+                    // Fetch meeting host which is not necessarily myself.
+                    $user = ZoomAPI::getUserByZoomId($data->host_id);
+
+                    $studipUser = $user ? User::findOneByEmail($user->email) : User::findCurrent();
+
+                    $meeting->user_id = $studipUser->id;
+                    $meeting->course_id = $this->course->id;
+                    $meeting->type = 'manual';
+                    $meeting->zoom_meeting_id = $zoomId;
+                    $meeting->mkdate = date('Y-m-d H:i:s');
+                    $meeting->chdate = date('Y-m-d H:i:s');
+
+                    if ($meeting->store()) {
+                        PageLayout::postSuccess(dgettext('zoom', 'Das Meeting wurde erfolgreich importiert.'));
+                    } else {
+                        PageLayout::postError(dgettext('zoom', 'Das Meeting konnte nicht importiert werden.'));
+                    }
+
+                    $this->relocate('meetings');
+                }
+            }
+        }
     }
 
     /**
