@@ -282,7 +282,8 @@ class ZoomAPI {
             $meeting = json_decode($meeting);
 
             // Convert start time to DateTime object for convenience.
-            $start_time = new DateTime($meeting->start_time, new DateTimeZone(self::ZOOM_TIMEZONE));
+            $time = is_array($meeting->occurrences) ? $meeting->occurrences[0]->start_time : $meeting->start_time;
+            $start_time = new DateTime($time, new DateTimeZone(self::ZOOM_TIMEZONE));
             $start_time->setTimezone(new DateTimeZone(self::LOCAL_TIMEZONE));
             $meeting->start_time = $start_time;
 
