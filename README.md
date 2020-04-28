@@ -41,6 +41,11 @@ Weiter haben Sie eine Übersicht neben "Meine Veranstaltungen":
 "Meine Zoom-Meetings" listet alle Meetings in Ihren Veranstaltungen
 auf, filterbar nach Semester.
 
+Für Veranstaltungen mit mehr als 300 Teilnehmenden ist eine erweiterte
+Zoom-Lizenz nötig, darauf werden Sie hingewiesen. Falls Sie bereits
+eine solche Lizenz haben, wird automatisch der größere Typ "Webinar"
+statt "Meeting" verwendet. 
+
 ## Ich brauche Hilfe - was kann oder soll ich alles einstellen?
 Schauen sie sich gerne den Screencast unter https://vimeo.com/412311523/eae4c6fbcf
 an, der die Nutzung und die einzelnen Optionen erklärt.
