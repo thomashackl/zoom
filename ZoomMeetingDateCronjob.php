@@ -104,8 +104,8 @@ class ZoomMeetingDateCronjob extends CronJob {
                         $newSettings = $m->zoom_settings;
 
                         // Some values must not be updated by Stud.IP
-                        foreach (words('option domains name') as $one) {
-                            unset('authentication_' . $one, $newSettings);
+                        foreach (words('authentication_option authentication_domains authentication_name') as $one) {
+                            unset($newSettings->one);
                         }
 
                         $newSettings->start_time =
