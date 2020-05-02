@@ -136,7 +136,8 @@ class ZoomAPI {
 
         $cache = StudipCacheFactory::getCache();
 
-        if ($option === null && $settings = $cache->read('zoom-usersettings-' . $userId)) {
+        if ($option === null && $settings = $cache->read('zoom-usersettings-' .
+                ($option !== null ? $option . '-' : '') . $userId)) {
             return json_decode($settings);
         } else {
             $result = self::_call('users/' . $userId . '/settings',
@@ -144,7 +145,7 @@ class ZoomAPI {
 
             if ($result['statuscode'] == 200) {
                 if ($option === null) {
-                    $cache->write('zoom-usersettings-' . $userId,
+                    $cache->write('zoom-usersettings-' . ($option !== null ? $option . '-' : '') . $userId,
                         json_encode($result['response']), self::CACHE_LIFETIME);
                 }
                 return $result['response'];
@@ -482,8 +483,8 @@ class ZoomAPI {
                     'label' => dgettext('zoom', 'Warteraum aktivieren'),
                     'default' => false
                 ],
-                'enforce_login' => [
-                    'name' => 'enforce_login',
+                'meeting_authentication' => [
+                    'name' => 'meeting_authentication',
                     'label' => dgettext('zoom', 'Nur angemeldete Nutzer dürfen teilnehmen (keine Gäste)'),
                     'default' => false
                 ]

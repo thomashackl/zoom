@@ -55,7 +55,6 @@ class MeetingsController extends AuthenticatedController {
             }
         });
 
-
         $neededPerm = in_array($this->course->status, studygroup_sem_types()) ? 'tutor' : 'dozent';
         if ($GLOBALS['perm']->have_studip_perm($neededPerm, $this->course->id)) {
             $me = ZoomAPI::getUser();
