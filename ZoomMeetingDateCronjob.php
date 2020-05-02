@@ -65,7 +65,6 @@ class ZoomMeetingDateCronjob extends CronJob {
         foreach ($meetings as $m) {
 
             $m->useCache = false;
-            $m->getZoom_Settings();
 
             if ($parameters['verbose']) {
                 echo sprintf("Processing course %s with Zoom ID %s.\n",
@@ -103,6 +102,12 @@ class ZoomMeetingDateCronjob extends CronJob {
                         }
 
                         $newSettings = $m->zoom_settings;
+
+                        // Some values must not be updated by Stud.IP
+                        foreach (words('option domains name') as $one) {
+                            unset('authentication_' . $one, $newSettings);
+                        }
+
                         $newSettings->start_time =
                             $startTime->format('Y-m-d') . 'T' . $startTime->format('H:i:s');
                         $newSettings->duration = $duration;
