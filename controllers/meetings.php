@@ -316,7 +316,7 @@ class MeetingsController extends AuthenticatedController {
                     ' +1 day last ' . $weekdays[$startTime->format('w') + 1]['name_en']);
 
                 $startTimeZoom = $startTime;
-                $startTimeZoom->setTimezone(ZoomAPI::ZOOM_TIMEZONE);
+                $startTimeZoom->setTimezone(new DateTimeZone(ZoomAPI::ZOOM_TIMEZONE));
                 $recurrence = [
                     'type' => ZoomAPI::RECURRENCE_WEEKLY,
                     'repeat_interval' => 1,
