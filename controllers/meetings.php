@@ -46,6 +46,8 @@ class MeetingsController extends AuthenticatedController {
         Navigation::activateItem('/course/zoom/meetings');
         PageLayout::setTitle(Context::getHeaderLine() . ' - ' . dgettext('zoom', 'Meetings'));
 
+        $this->permission = $GLOBALS['perm']->have_studip_perm('dozent', $this->course->id);
+
         $this->meetings = array_filter(ZoomMeeting::findByCourse_id($this->course->id), function($meeting) {
             if ($meeting->zoom_settings === 404) {
                 $meeting->delete();
@@ -161,9 +163,15 @@ class MeetingsController extends AuthenticatedController {
             ['id' => $this->course->id]
         );
 
+        // Edit an existing meeting.
         if ($id != 0) {
             $this->meeting = ZoomMeeting::find($id);
             $this->meeting->useCache = false;
+
+            // Check if current user is (alternative) host, only then do we have permission to edit.
+            if (!$this->meeting->isHost()) {
+                throw new AccessDeniedException();
+            }
 
             $this->roomSettings = ZoomAPI::getRoomSettings(
                 $this->meeting->webinar ? 'webinar' : 'meeting');
@@ -405,6 +413,12 @@ class MeetingsController extends AuthenticatedController {
         $this->my_meetings = Request::int('my', 0);
 
         $meeting = ZoomMeeting::find($id);
+
+        // Check if current user is (alternative) host, only then do we have permission to delete.
+        if (!$meeting->isHost()) {
+            throw new AccessDeniedException();
+        }
+
         if (ZoomAPI::deleteMeeting($meeting->zoom_meeting_id, $meeting->webinar) !== null) {
 
             if ($meeting->delete()) {
@@ -513,7 +527,7 @@ class MeetingsController extends AuthenticatedController {
     public function join_action($id)
     {
         $meeting = ZoomMeeting::find($id);
-        if ($meeting->isHost($GLOBALS['user'])) {
+        if ($meeting->isHost()) {
             $this->relocate($meeting->zoom_settings->start_url);
         } else {
             $this->relocate($meeting->zoom_settings->join_url);

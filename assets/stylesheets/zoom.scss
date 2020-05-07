@@ -16,7 +16,7 @@ table.default {
           width: 100%;
         }
 
-        &:last-child:not(.join-meeting) {
+        &:last-child:not(.join-meeting):not(:first-child) {
           text-align: right;
         }
       }
