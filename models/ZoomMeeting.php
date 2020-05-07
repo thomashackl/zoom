@@ -48,8 +48,19 @@ class ZoomMeeting extends SimpleORMap
         parent::configure($config);
     }
 
-    public function isHost($user)
+    /**
+     * Checks if the given user is host or alternative host for this meeting.
+     *
+     * @param User|null $user the user to check (current user if not set)
+     * @return bool
+     * @throws Exception
+     */
+    public function isHost($user = null)
     {
+        if ($user === null) {
+            $user = $GLOBALS['user'];
+        }
+
         $zoomUser = ZoomAPI::getUser($user->email);
         $alternative = $this->zoom_settings->settings->alternative_hosts ?: '';
 

@@ -22,16 +22,20 @@
         </caption>
         <colgroup>
             <col>
-            <col width="40">
+            <?php if ($permission) : ?>
+                <col width="40">
+            <?php endif ?>
         </colgroup>
         <thead>
             <tr>
                 <th>
                     <?php echo dgettext('zoom', 'Titel') ?>
                 </th>
-                <th>
-                    <?php echo dgettext('zoom', 'Aktionen') ?>
-                </th>
+                <?php if ($permission) : ?>
+                    <th>
+                        <?php echo dgettext('zoom', 'Aktionen') ?>
+                    </th>
+                <?php endif ?>
             </tr>
         </thead>
         <tbody>
@@ -49,15 +53,21 @@
                             </a>
                         </div>
                     </td>
-                    <td>
-                        <a href="<?php echo $controller->link_for('meetings/edit', $meeting->id) ?>" data-dialog="size=auto">
-                            <?php echo Icon::create('edit') ?>
-                        </a>
-                        <a href="<?php echo $controller->link_for('meetings/delete', $meeting->id) ?>"
-                           data-confirm="<?php echo dgettext('zoom', 'Soll das Meeting wirklich gelöscht werden?') ?>">
-                            <?php echo Icon::create('trash') ?>
-                        </a>
-                    </td>
+                    <?php if ($permission) : ?>
+                        <td>
+                            <?php if ($meeting->isHost()) : ?>
+                                <a href="<?php echo $controller->link_for('meetings/edit', $meeting->id) ?>"
+                                   data-dialog="size=auto">
+                                    <?php echo Icon::create('edit') ?>
+                                </a>
+                                <a href="<?php echo $controller->link_for('meetings/delete', $meeting->id) ?>"
+                                   data-confirm="<?php echo dgettext('zoom',
+                                       'Soll das Meeting wirklich gelöscht werden?') ?>">
+                                    <?php echo Icon::create('trash') ?>
+                                </a>
+                            <?php endif ?>
+                        </td>
+                    <?php endif ?>
                 </tr>
             <?php endforeach ?>
         </tbody>
