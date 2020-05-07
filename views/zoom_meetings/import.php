@@ -1,4 +1,4 @@
-<form class="default" action="<?php echo $controller->link_for('meetings/do_import') ?>" method="post">
+<form class="default" action="<?php echo $controller->link_for('zoom_meetings/do_import') ?>" method="post">
     <fieldset>
         <legend>
             <?php echo dgettext('zoom', 'Importieren sie ein bestehendes Meeting aus Zoom') ?>
@@ -19,7 +19,7 @@
     <footer data-dialog-button>
         <?= CSRFProtection::tokenTag() ?>
         <?= Studip\Button::createAccept(_('Speichern'), 'store') ?>
-        <?= Studip\LinkButton::createCancel(_('Abbrechen'), $controller->link_for('meetings'),
+        <?= Studip\LinkButton::createCancel(_('Abbrechen'), $controller->link_for('zoom_meetings'),
             ['data-dialog-close' => true]) ?>
     </footer>
 </form>

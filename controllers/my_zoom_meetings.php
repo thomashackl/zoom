@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class MyMeetingsController
+ * Class MyZoomMeetingsController
  * Controller for listing and adding Zoom meetings to a course.
  *
  * This program is free software; you can redistribute it and/or
@@ -14,7 +14,7 @@
  * @category    Zoom
  */
 
-class MyMeetingsController extends AuthenticatedController {
+class MyZoomMeetingsController extends AuthenticatedController {
 
     /**
      * Actions and settings taking place before every page call.
@@ -94,7 +94,7 @@ class MyMeetingsController extends AuthenticatedController {
         $sidebar = Sidebar::get();
 
         $widget = new SelectWidget(dgettext('zoom', 'Semesterfilter'),
-            $this->link_for('my_meetings'), 'semester');
+            $this->link_for('my_zoom_meetings'), 'semester');
         $widget->setMaxLength(50);
         $widget->addElement(new SelectElement('current', dgettext('zoom', 'Aktuelles Semester'),
             $this->semester->id == 'current'));

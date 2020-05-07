@@ -32,7 +32,7 @@
                         htmlReady($m->zoom_settings->start_time->format('d.m.Y H:i'))) ?>
                 </td>
                 <td class="join-meeting">
-                    <a href="<?php echo $controller->link_for('meetings/join/' . $m->id . '?cid=' . $m->course_id) ?>"
+                    <a href="<?php echo $controller->link_for('zoom_meetings/join/' . $m->id . '?cid=' . $m->course_id) ?>"
                        title="<?php echo dgettext('zoom', 'Teilnehmen') ?>" target="_blank">
                         <?php echo Icon::create('door-enter')->asImg(30) ?>
                         <?php echo dgettext('zoom', 'Teilnehmen') ?>
@@ -41,13 +41,13 @@
                     <?php
                         $actions = ActionMenu::get();
                         $actions->addLink(
-                            $controller->link_for('meetings/edit/', $m->id) . '?cid=' . $m->course_id . '&my=1',
+                            $controller->link_for('zoom_meetings/edit', $m->id) . '?cid=' . $m->course_id . '&my=1',
                             dgettext('zoom', 'Bearbeiten'),
                             Icon::create('edit'),
                             ['data-dialog' => 'size=auto']
                         );
                         $actions->addLink(
-                            $controller->link_for('meetings/ask_delete', $m->id) . '?cid=' . $m->course_id . '&my=1',
+                            $controller->link_for('zoom_meetings/ask_delete', $m->id) . '?cid=' . $m->course_id . '&my=1',
                             dgettext('zoom', 'Löschen'),
                             Icon::create('trash'),
                             ['data-dialog' => 'size=auto']
