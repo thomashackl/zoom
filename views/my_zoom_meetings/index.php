@@ -37,7 +37,7 @@
                         <?php echo Icon::create('door-enter')->asImg(30) ?>
                         <?php echo dgettext('zoom', 'Teilnehmen') ?>
                     </a>
-                <?php if ($m->isHost($me->id)) : ?>
+                <?php if ($m->isHost()) : ?>
                     <?php
                         $actions = ActionMenu::get();
                         $actions->addLink(

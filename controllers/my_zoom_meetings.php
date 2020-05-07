@@ -43,7 +43,7 @@ class MyZoomMeetingsController extends AuthenticatedController {
         // Navigation handling.
         Navigation::activateItem('/browse/zoom');
 
-        $this->me = User::findCurrent();
+        $this->me = $GLOBALS['user'];
 
         // Get selected semester.
         $semesterId = Request::option('semester', 'current') ?:
