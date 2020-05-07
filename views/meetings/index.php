@@ -60,9 +60,8 @@
                                    data-dialog="size=auto">
                                     <?php echo Icon::create('edit') ?>
                                 </a>
-                                <a href="<?php echo $controller->link_for('meetings/delete', $meeting->id) ?>"
-                                   data-confirm="<?php echo dgettext('zoom',
-                                       'Soll das Meeting wirklich gelöscht werden?') ?>">
+                                <a href="<?php echo $controller->link_for('meetings/ask_delete', $meeting->id) ?>"
+                                   data-dialog="size=auto">
                                     <?php echo Icon::create('trash') ?>
                                 </a>
                             <?php endif ?>

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-07 16:13+0200\n"
-"PO-Revision-Date: 2020-05-07 16:15+0200\n"
+"POT-Creation-Date: 2020-05-07 17:07+0200\n"
+"PO-Revision-Date: 2020-05-07 17:08+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -160,47 +160,47 @@ msgid ""
 msgstr ""
 "Unable to save the meeting because the data transfer to Zoom has failed."
 
-#: controllers/meetings.php:425
+#: controllers/meetings.php:439
 msgid "Das Meeting wurde gelöscht."
 msgstr "The meeting has been deleted."
 
-#: controllers/meetings.php:427
+#: controllers/meetings.php:441
 msgid "Das Meeting konnte nicht aus Stud.IP gelöscht werden."
 msgstr "Unable to delete the meeting from Stud.IP."
 
-#: controllers/meetings.php:431
+#: controllers/meetings.php:445
 msgid "Das Meeting konnte nicht in Zoom gelöscht werden."
 msgstr "Unable to delete the meeting from Zoom."
 
-#: controllers/meetings.php:466
+#: controllers/meetings.php:480
 msgid "Es wurde keine ID angegeben."
 msgstr "No ID has been entered."
 
-#: controllers/meetings.php:476
+#: controllers/meetings.php:490
 msgid ""
 "Das Meeting mit der angegebenen ID ist bereits einer Stud.IP-Veranstaltung "
 "zugeordnet."
 msgstr ""
 "The meeting with the provided ID is already connected to a Stud.IP course."
 
-#: controllers/meetings.php:484
+#: controllers/meetings.php:498
 msgid ""
 "Das Meeting mit der angegebenen ID konnte nicht in Zoom gefunden werden."
 msgstr "No meeting with the provided ID was found in Zoom."
 
-#: controllers/meetings.php:490
+#: controllers/meetings.php:504
 msgid "Die Daten des Meetings konnten nicht aus Zoom ausgelesen werden."
 msgstr "Unable to read the meeting data from Zoom."
 
-#: controllers/meetings.php:526
+#: controllers/meetings.php:540
 msgid "Das Meeting wurde erfolgreich importiert."
 msgstr "The meeting has been successfully imported."
 
-#: controllers/meetings.php:528
+#: controllers/meetings.php:542
 msgid "Das Meeting konnte nicht importiert werden."
 msgstr "Unable to import the meeting from Zoom."
 
-#: controllers/meetings.php:531
+#: controllers/meetings.php:545
 msgid ""
 "Sie dürfen nur Meetings importieren, deren Host oder alternativer Host Sie "
 "sind."
@@ -230,7 +230,8 @@ msgstr ""
 msgid "Speichern"
 msgstr "Save"
 
-#: views/meetings/import.php:22 views/meetings/edit.php:176
+#: views/meetings/import.php:22 views/meetings/ask_delete.php:15
+#: views/meetings/edit.php:176
 msgid "Abbrechen"
 msgstr "Cancel"
 
@@ -273,9 +274,17 @@ msgstr "Next date: %s"
 msgid "Teilnehmen"
 msgstr "Join"
 
-#: views/meetings/index.php:65 views/my_meetings/index.php:53
+#: views/meetings/ask_delete.php:2
 msgid "Soll das Meeting wirklich gelöscht werden?"
 msgstr "Are you sure you want to delete this meeting?"
+
+#: views/meetings/ask_delete.php:6
+msgid "Meeting nicht in Zoom, sondern nur in Stud.IP löschen"
+msgstr "Delete meeting only in Stud.IP, not in Zoom"
+
+#: views/meetings/ask_delete.php:14 views/my_meetings/index.php:51
+msgid "Löschen"
+msgstr "Delete"
 
 #: views/meetings/edit.php:4
 msgid "Wie soll das Meeting angelegt werden?"
@@ -400,10 +409,6 @@ msgstr "Go to the course page"
 #: views/my_meetings/index.php:45
 msgid "Bearbeiten"
 msgstr "Edit"
-
-#: views/my_meetings/index.php:51
-msgid "Löschen"
-msgstr "Delete"
 
 #: ZoomPlugin.php:39
 msgid "Zoom"
