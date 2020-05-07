@@ -519,31 +519,42 @@ class MeetingsController extends AuthenticatedController {
                      */
                     // Fetch my data from Zoom to check if I am host.
                     $me = ZoomAPI::getUser();
-                    // Get alternative hosts for this meeting.
-                    $alternative = $data->settings->alternative_hosts ?: '';
 
-                    // Is the current user host or alternative host?
-                    $isHost = ($me->id == $data->host_id ||
-                        in_array($GLOBALS['user']->email, explode(',', $alternative)));
-
-                    if ($isHost) {
-                        $studipUser = $user ? User::findOneByEmail($user->email) : User::findCurrent();
-
-                        $meeting->user_id = $studipUser->id;
-                        $meeting->course_id = $this->course->id;
-                        $meeting->type = 'manual';
-                        $meeting->zoom_meeting_id = $zoomId;
-                        $meeting->mkdate = date('Y-m-d H:i:s');
-                        $meeting->chdate = date('Y-m-d H:i:s');
-
-                        if ($meeting->store()) {
-                            PageLayout::postSuccess(dgettext('zoom', 'Das Meeting wurde erfolgreich importiert.'));
-                        } else {
-                            PageLayout::postError(dgettext('zoom', 'Das Meeting konnte nicht importiert werden.'));
-                        }
+                    // Prevent import of personal meeting rooms.
+                    if ($zoomId == $user->pmi || $zoomId == $me->pmi) {
+                        PageLayout::postError(dgettext('zoom',
+                            'Persönliche Meetingräume können nicht importiert werden.'));
                     } else {
-                        PageLayout::postError(dgettext('zoom', 'Sie dürfen nur Meetings importieren, ' .
-                            'deren Host oder alternativer Host Sie sind.'));
+
+                        // Get alternative hosts for this meeting.
+                        $alternative = $data->settings->alternative_hosts ?: '';
+
+                        // Is the current user host or alternative host?
+                        $isHost = ($me->id == $data->host_id ||
+                            in_array($GLOBALS['user']->email, explode(',', $alternative)));
+
+                        if ($isHost) {
+                            $studipUser = $user ? User::findOneByEmail($user->email) : User::findCurrent();
+
+                            $meeting->user_id = $studipUser->id;
+                            $meeting->course_id = $this->course->id;
+                            $meeting->type = 'manual';
+                            $meeting->zoom_meeting_id = $zoomId;
+                            $meeting->mkdate = date('Y-m-d H:i:s');
+                            $meeting->chdate = date('Y-m-d H:i:s');
+
+                            if ($meeting->store()) {
+                                PageLayout::postSuccess(dgettext('zoom',
+                                    'Das Meeting wurde erfolgreich importiert.'));
+                            } else {
+                                PageLayout::postError(dgettext('zoom',
+                                    'Das Meeting konnte nicht importiert werden.'));
+                            }
+                        } else {
+                            PageLayout::postError(dgettext('zoom',
+                                'Sie dürfen nur Meetings importieren, ' .
+                                'deren Host oder alternativer Host Sie sind.'));
+                        }
                     }
 
                     $this->relocate('meetings');

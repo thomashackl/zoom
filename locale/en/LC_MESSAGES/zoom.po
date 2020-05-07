@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-07 17:07+0200\n"
-"PO-Revision-Date: 2020-05-07 17:08+0200\n"
+"POT-Creation-Date: 2020-05-07 17:27+0200\n"
+"PO-Revision-Date: 2020-05-07 17:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -192,15 +192,19 @@ msgstr "No meeting with the provided ID was found in Zoom."
 msgid "Die Daten des Meetings konnten nicht aus Zoom ausgelesen werden."
 msgstr "Unable to read the meeting data from Zoom."
 
-#: controllers/meetings.php:540
+#: controllers/meetings.php:526
+msgid "Persönliche Meetingräume können nicht importiert werden."
+msgstr "Personal meeting rooms cannot be imported."
+
+#: controllers/meetings.php:548
 msgid "Das Meeting wurde erfolgreich importiert."
 msgstr "The meeting has been successfully imported."
 
-#: controllers/meetings.php:542
+#: controllers/meetings.php:551
 msgid "Das Meeting konnte nicht importiert werden."
 msgstr "Unable to import the meeting from Zoom."
 
-#: controllers/meetings.php:545
+#: controllers/meetings.php:555
 msgid ""
 "Sie dürfen nur Meetings importieren, deren Host oder alternativer Host Sie "
 "sind."
