@@ -41,16 +41,16 @@
                     <?php
                         $actions = ActionMenu::get();
                         $actions->addLink(
-                            $controller->link_for('meetings/edit/' . $m->id . '?my=1&cid=' . $m->course_id),
+                            $controller->link_for('meetings/edit/', $m->id) . '?cid=' . $m->course_id . '&my=1',
                             dgettext('zoom', 'Bearbeiten'),
                             Icon::create('edit'),
                             ['data-dialog' => 'size=auto']
                         );
                         $actions->addLink(
-                            $controller->link_for('meetings/delete/' . $m->id . '?my=1&cid=' . $m->course_id),
+                            $controller->link_for('meetings/ask_delete', $m->id) . '?cid=' . $m->course_id . '&my=1',
                             dgettext('zoom', 'Löschen'),
                             Icon::create('trash'),
-                            ['data-confirm' => dgettext('zoom', 'Soll das Meeting wirklich gelöscht werden?')]
+                            ['data-dialog' => 'size=auto']
                         );
 
                         echo $actions->render();

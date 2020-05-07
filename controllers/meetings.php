@@ -398,12 +398,26 @@ class MeetingsController extends AuthenticatedController {
     }
 
     /**
+     * Confirm meeting deletion, offering the choice to only
+     * delete in Stud.IP and not in Zoom.
+     *
+     * @param int $id meeting ID
+     */
+    public function ask_delete_action($id)
+    {
+        $this->id = $id;
+        $this->my = Request::int('my', 0);
+    }
+
+    /**
      * Deletes a Zoom meeting.
      *
-     * @param $id
+     * @param int $id meeting ID
      */
     public function delete_action($id)
     {
+        CSRFProtection::verifyUnsafeRequest();
+
         // In studygroups, author permissions are sufficient.
         $neededPerm = in_array($this->course->status, studygroup_sem_types()) ? 'tutor' : 'dozent';
         if (!$GLOBALS['perm']->have_studip_perm($neededPerm, $this->course->id)) {
@@ -419,7 +433,7 @@ class MeetingsController extends AuthenticatedController {
             throw new AccessDeniedException();
         }
 
-        if (ZoomAPI::deleteMeeting($meeting->zoom_meeting_id, $meeting->webinar) !== null) {
+        if (Request::int('only_studip') || ZoomAPI::deleteMeeting($meeting->zoom_meeting_id, $meeting->webinar) !== null) {
 
             if ($meeting->delete()) {
                 PageLayout::postSuccess(dgettext('zoom', 'Das Meeting wurde gelöscht.'));
