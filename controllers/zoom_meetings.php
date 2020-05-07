@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class MeetingsController
+ * Class ZoomMeetingsController
  * Controller for listing and adding Zoom meetings to a course.
  *
  * This program is free software; you can redistribute it and/or
@@ -14,7 +14,7 @@
  * @category    Zoom
  */
 
-class MeetingsController extends AuthenticatedController {
+class ZoomMeetingsController extends AuthenticatedController {
 
     /**
      * Actions and settings taking place before every page call.
@@ -94,10 +94,10 @@ class MeetingsController extends AuthenticatedController {
                     $sidebar = Sidebar::get();
                     $actions = new ActionsWidget();
                     $actions->addLink(dgettext('zoom', 'Meeting erstellen'),
-                        $this->link_for('meetings/edit'),
+                        $this->link_for('zoom_meetings/edit'),
                         Icon::create('add'))->asDialog('size="auto"');
                     $actions->addLink(dgettext('zoom', 'Meeting aus Zoom importieren'),
-                        $this->link_for('meetings/import'),
+                        $this->link_for('zoom_meetings/import'),
                         Icon::create('install'))->asDialog('size="auto"');
                     $sidebar->addWidget($actions);
                 }
@@ -123,7 +123,7 @@ class MeetingsController extends AuthenticatedController {
         $zoom->addSubNavigation('edit', new Navigation($id == 0 ?
             dgettext('zoom', 'Zoom-Meeting anlegen') :
             dgettext('zoom', 'Zoom-Meeting bearbeiten'),
-            PluginEngine::getURL($this, [], 'meetings')));
+            PluginEngine::getURL($this, [], 'zoom_meetings')));
         Navigation::activateItem('/course/zoom/edit');
 
         $this->my_meetings = Request::int('my', 0);
@@ -187,7 +187,7 @@ class MeetingsController extends AuthenticatedController {
                         dgettext('zoom','Das Meeting ist nicht mehr in Zoom vorhanden, ' .
                             'konnte aber nicht automatisch in Stud.IP gelöscht werden.'));
                 }
-                $this->relocate(Request::int('my', 0) == 1 ? 'my_meetings' : 'meetings');
+                $this->relocate(Request::int('my', 0) == 1 ? 'my_zoom_meetings' : 'zoom_meetings');
             }
 
         } else {
@@ -394,7 +394,7 @@ class MeetingsController extends AuthenticatedController {
 
         }
 
-        $this->relocate(Request::int('my', 0) == 1 ? 'my_meetings' : 'meetings');
+        $this->relocate(Request::int('my', 0) == 1 ? 'my_zoom_meetings' : 'zoom_meetings');
     }
 
     /**
@@ -445,7 +445,7 @@ class MeetingsController extends AuthenticatedController {
             PageLayout::postError(dgettext('zoom', 'Das Meeting konnte nicht in Zoom gelöscht werden.'));
         }
 
-        $this->relocate(Request::int('my', 0) == 1 ? 'my_meetings' : 'meetings');
+        $this->relocate(Request::int('my', 0) == 1 ? 'my_zoom_meetings' : 'zoom_meetings');
     }
 
     /**
@@ -478,7 +478,7 @@ class MeetingsController extends AuthenticatedController {
         $zoomId = Request::get('zoom_id', '');
         if ($zoomId == '') {
             PageLayout::postError(dgettext('zoom', 'Es wurde keine ID angegeben.'));
-            $this->relocate('meetings');
+            $this->relocate('zoom_meetings');
         } else {
             // Clear hyphens if necessary.
             $zoomId = str_replace('-', '', trim($zoomId));
@@ -489,7 +489,7 @@ class MeetingsController extends AuthenticatedController {
             if (count($studip) > 0) {
                 PageLayout::postWarning(dgettext('zoom', 'Das Meeting mit der angegebenen ID ist '.
                     'bereits einer Stud.IP-Veranstaltung zugeordnet.'));
-                $this->relocate('meetings');
+                $this->relocate('zoom_meetings');
             } else {
                 $data = ZoomAPI::getMeeting($zoomId);
 
@@ -497,13 +497,13 @@ class MeetingsController extends AuthenticatedController {
                 if ($data === 404) {
                     PageLayout::postError(dgettext('zoom', 'Das Meeting mit der angegebenen ID '.
                         'konnte nicht in Zoom gefunden werden.'));
-                    $this->relocate('meetings');
+                    $this->relocate('zoom_meetings');
 
                 // Some error occurred on API call.
                 } else if ($data === null) {
                     PageLayout::postError(dgettext('zoom', 'Die Daten des Meetings konnten nicht '.
                         'aus Zoom ausgelesen werden.'));
-                    $this->relocate('meetings');
+                    $this->relocate('zoom_meetings');
 
                 // We have a meeting here, import it.
                 } else {
@@ -557,7 +557,7 @@ class MeetingsController extends AuthenticatedController {
                         }
                     }
 
-                    $this->relocate('meetings');
+                    $this->relocate('zoom_meetings');
                 }
             }
         }

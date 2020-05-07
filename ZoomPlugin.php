@@ -26,7 +26,7 @@ class ZoomPlugin extends StudIPPlugin implements StandardPlugin, SystemPlugin {
 
         if (Navigation::hasItem('/browse')) {
             $navigation = new Navigation(dgettext('zoom', 'Meine Zoom-Meetings'),
-                PluginEngine::getURL($this, [], 'my_meetings'));
+                PluginEngine::getURL($this, [], 'my_zoom_meetings'));
             Navigation::addItem('/browse/zoom', $navigation);
         }
     }
@@ -50,7 +50,7 @@ class ZoomPlugin extends StudIPPlugin implements StandardPlugin, SystemPlugin {
         $num_entries = 0;
         $text = $this->getDisplayName();
 
-        $navigation = new Navigation('zoom', PluginEngine::getURL($this, [], 'meetings'));
+        $navigation = new Navigation('zoom', PluginEngine::getURL($this, [], 'zoom_meetings'));
         $navigation->setBadgeNumber($num_entries);
 
         if ($num_entries > 0) {
@@ -70,7 +70,7 @@ class ZoomPlugin extends StudIPPlugin implements StandardPlugin, SystemPlugin {
 
         $zoom = new Navigation($this->getDisplayName());
         $zoom->addSubNavigation('meetings', new Navigation(dgettext('zoom', 'Meetings'),
-            PluginEngine::getURL($this, [], 'meetings')));
+            PluginEngine::getURL($this, [], 'zoom_meetings')));
 
         return compact('zoom');
     }
@@ -104,7 +104,7 @@ class ZoomPlugin extends StudIPPlugin implements StandardPlugin, SystemPlugin {
         $dispatcher = new Trails_Dispatcher(
             $this->getPluginPath(),
             rtrim(PluginEngine::getLink($this, [], null), '/'),
-            'meetings'
+            'zoom_meetings'
         );
         URLHelper::addLinkParam('cid', $range_id);
 

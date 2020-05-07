@@ -1,4 +1,4 @@
-<form class="default" action="<?php echo $controller->link_for('meetings/store') ?>" method="post">
+<form class="default" action="<?php echo $controller->link_for('zoom_meetings/store') ?>" method="post">
     <fieldset>
         <legend>
             <?php echo dgettext('zoom', 'Wie soll das Meeting angelegt werden?') ?>
@@ -173,7 +173,7 @@
         <input type="hidden" name="my" value="<?php echo $my_meetings ?>">
         <?= CSRFProtection::tokenTag() ?>
         <?= Studip\Button::createAccept(_('Speichern'), 'store') ?>
-        <?= Studip\LinkButton::createCancel(_('Abbrechen'), $controller->link_for('meetings'),
+        <?= Studip\LinkButton::createCancel(_('Abbrechen'), $controller->link_for('zoom_meetings'),
             ['data-dialog-close' => true]) ?>
     </footer>
 </form>

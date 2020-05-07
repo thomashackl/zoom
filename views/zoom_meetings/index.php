@@ -47,7 +47,7 @@
                         <?php echo sprintf(dgettext('zoom', 'Nächster Termin: %s'),
                             htmlReady($meeting->zoom_settings->start_time->format('d.m.Y H:i'))) ?>
                         <div class="join-meeting">
-                            <a href="<?php echo $controller->link_for('meetings/join', $meeting->id) ?>" target="_blank">
+                            <a href="<?php echo $controller->link_for('zoom_meetings/join', $meeting->id) ?>" target="_blank">
                                 <?php echo Icon::create('door-enter')->asImg(48) ?>
                                 <?php echo dgettext('zoom', 'Teilnehmen') ?>
                             </a>
@@ -56,11 +56,11 @@
                     <?php if ($permission) : ?>
                         <td>
                             <?php if ($meeting->isHost()) : ?>
-                                <a href="<?php echo $controller->link_for('meetings/edit', $meeting->id) ?>"
+                                <a href="<?php echo $controller->link_for('zoom_meetings/edit', $meeting->id) ?>"
                                    data-dialog="size=auto">
                                     <?php echo Icon::create('edit') ?>
                                 </a>
-                                <a href="<?php echo $controller->link_for('meetings/ask_delete', $meeting->id) ?>"
+                                <a href="<?php echo $controller->link_for('zoom_meetings/ask_delete', $meeting->id) ?>"
                                    data-dialog="size=auto">
                                     <?php echo Icon::create('trash') ?>
                                 </a>
