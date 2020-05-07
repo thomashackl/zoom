@@ -493,24 +493,43 @@ class MeetingsController extends AuthenticatedController {
 
                 // We have a meeting here, import it.
                 } else {
+
                     $meeting = new ZoomMeeting();
 
                     // Fetch meeting host which is not necessarily myself.
                     $user = ZoomAPI::getUserByZoomId($data->host_id);
 
-                    $studipUser = $user ? User::findOneByEmail($user->email) : User::findCurrent();
+                    /*
+                     * Check if current user is (alternative) host in the
+                     * meeting to import. If not, abort import.
+                     */
+                    // Fetch my data from Zoom to check if I am host.
+                    $me = ZoomAPI::getUser();
+                    // Get alternative hosts for this meeting.
+                    $alternative = $data->settings->alternative_hosts ?: '';
 
-                    $meeting->user_id = $studipUser->id;
-                    $meeting->course_id = $this->course->id;
-                    $meeting->type = 'manual';
-                    $meeting->zoom_meeting_id = $zoomId;
-                    $meeting->mkdate = date('Y-m-d H:i:s');
-                    $meeting->chdate = date('Y-m-d H:i:s');
+                    // Is the current user host or alternative host?
+                    $isHost = ($me->id == $data->host_id ||
+                        in_array($GLOBALS['user']->email, explode(',', $alternative)));
 
-                    if ($meeting->store()) {
-                        PageLayout::postSuccess(dgettext('zoom', 'Das Meeting wurde erfolgreich importiert.'));
+                    if ($isHost) {
+                        $studipUser = $user ? User::findOneByEmail($user->email) : User::findCurrent();
+
+                        $meeting->user_id = $studipUser->id;
+                        $meeting->course_id = $this->course->id;
+                        $meeting->type = 'manual';
+                        $meeting->zoom_meeting_id = $zoomId;
+                        $meeting->mkdate = date('Y-m-d H:i:s');
+                        $meeting->chdate = date('Y-m-d H:i:s');
+
+                        if ($meeting->store()) {
+                            PageLayout::postSuccess(dgettext('zoom', 'Das Meeting wurde erfolgreich importiert.'));
+                        } else {
+                            PageLayout::postError(dgettext('zoom', 'Das Meeting konnte nicht importiert werden.'));
+                        }
                     } else {
-                        PageLayout::postError(dgettext('zoom', 'Das Meeting konnte nicht importiert werden.'));
+                        PageLayout::postError(dgettext('zoom', 'Sie dürfen nur Meetings importieren, ' .
+                            'deren Host oder alternativer Host Sie sind.'));
                     }
 
                     $this->relocate('meetings');
