@@ -138,7 +138,8 @@
         <?php if (count($otherLecturers) > 0) : ?>
             <fieldset>
                 <legend>
-                    <?php echo dgettext('zoom', 'Weitere Personen mit Vollzugriff auf dieses Meeting (Co-Hosts)') ?>
+                    <?php echo dgettext('zoom',
+                        'Weitere Personen mit Vollzugriff auf dieses Meeting (alternative Hosts)') ?>
                 </legend>
                 <section>
                     <?php foreach ($otherLecturers as $lecturer) : ?>
@@ -164,9 +165,10 @@
                     <?php if ($unavailable > 0) : ?>
                         <?php echo MessageBox::warning(sprintf(dgettext('zoom', 'Für eine(n) oder ' .
                             'mehrere Lehrende dieser Veranstaltung existiert noch keine Kennung in Zoom, daher ' .
-                            'können diese Personen momentan nicht als Co-Host eingetragen werden. Bitten Sie die ' .
-                            'Personen, sich einmalig unter <a href="%1$s" target="_blank">%1$s</a> einzuloggen, ' .
-                            'damit die Kennung angelegt wird. Danach können Sie die Personen als Co-Host eintragen.'),
+                            'können diese Personen momentan nicht als alternativer Host eingetragen werden. ' .
+                            'Bitten Sie die Personen, sich einmalig unter <a href="%1$s" target="_blank">%1$s</a> ' .
+                            'einzuloggen, damit die Kennung angelegt wird. Danach können Sie die Personen als ' .
+                            'alternativen Host eintragen.'),
                             Config::get()->ZOOM_LOGIN_URL)) ?>
                     <?php endif ?>
                 </section>

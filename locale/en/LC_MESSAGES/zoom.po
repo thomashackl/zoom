@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-11 11:29+0200\n"
-"PO-Revision-Date: 2020-05-11 11:30+0200\n"
+"POT-Creation-Date: 2020-05-11 11:34+0200\n"
+"PO-Revision-Date: 2020-05-11 11:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -230,12 +230,12 @@ msgstr "Meeting"
 msgid "Webinar"
 msgstr "Webinar"
 
-#: views/zoom_meetings/import.php:38 views/zoom_meetings/edit.php:195
+#: views/zoom_meetings/import.php:38 views/zoom_meetings/edit.php:197
 msgid "Speichern"
 msgstr "Save"
 
 #: views/zoom_meetings/import.php:39 views/zoom_meetings/ask_delete.php:15
-#: views/zoom_meetings/edit.php:196
+#: views/zoom_meetings/edit.php:198
 msgid "Abbrechen"
 msgstr "Cancel"
 
@@ -389,25 +389,27 @@ msgstr "No repetition"
 msgid "Wöchentlich (bis Semesterende)"
 msgstr "Weekly repetition (until the end of the semester)"
 
-#: views/zoom_meetings/edit.php:141
-msgid "Weitere Personen mit Vollzugriff auf dieses Meeting (Co-Hosts)"
-msgstr "Other persons with full access to meeting settings (co-hosts)"
+#: views/zoom_meetings/edit.php:142
+msgid "Weitere Personen mit Vollzugriff auf dieses Meeting (alternative Hosts)"
+msgstr "Other persons with full access to meeting settings (alternative hosts)"
 
-#: views/zoom_meetings/edit.php:165
+#: views/zoom_meetings/edit.php:166
 #, php-format
 msgid ""
 "Für eine(n) oder mehrere Lehrende dieser Veranstaltung existiert noch keine "
-"Kennung in Zoom, daher können diese Personen momentan nicht als Co-Host "
-"eingetragen werden. Bitten Sie die Personen, sich einmalig unter <a href="
-"\"%1$s\" target=\"_blank\">%1$s</a> einzuloggen, damit die Kennung angelegt "
-"wird. Danach können Sie die Personen als Co-Host eintragen."
+"Kennung in Zoom, daher können diese Personen momentan nicht als alternativer "
+"Host eingetragen werden. Bitten Sie die Personen, sich einmalig unter <a "
+"href=\"%1$s\" target=\"_blank\">%1$s</a> einzuloggen, damit die Kennung "
+"angelegt wird. Danach können Sie die Personen als alternativen Host "
+"eintragen."
 msgstr ""
-"One or more lecturers for this class cannot be set as co-hosts because they "
-"do not have a Zoom account yet. Please ask every lecturer to log in once via "
-"<a href=\"%1$s\" target=\"_blank\">%1$s</a>, which will create their Zoom "
-"account. You will be able to add them as co-hosts once this has been done."
+"One or more lecturers for this class cannot be set as alternative hosts "
+"because they do not have a Zoom account yet. Please ask every lecturer to "
+"log in once via <a href=\"%1$s\" target=\"_blank\">%1$s</a>, which will "
+"create their Zoom account. You will be able to add them as alternative hosts "
+"once this has been done."
 
-#: views/zoom_meetings/edit.php:177
+#: views/zoom_meetings/edit.php:179
 msgid "Zoom-Einstellungen"
 msgstr "Zoom settings"
 
