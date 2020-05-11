@@ -373,7 +373,8 @@ class ZoomMeetingsController extends AuthenticatedController {
         }
 
         if (!$meeting->isNew()) {
-            $zoomMeeting = ZoomAPI::updateMeeting($meeting->zoom_meeting_id, $zoomSettings, $meeting->webinar);
+            $zoomMeeting = ZoomAPI::updateMeeting($meeting->zoom_settings->host_id,
+                $meeting->zoom_meeting_id, $zoomSettings, $meeting->webinar);
         } else {
             $zoomMeeting = ZoomAPI::createMeeting($GLOBALS['user']->email, $zoomSettings, $meeting->webinar);
         }
