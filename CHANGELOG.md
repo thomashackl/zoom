@@ -1,28 +1,21 @@
-# Version 1.4
-## 2020-05-11
+# 2020-05-11 Version 1.4
 - always allow meeting/webinar creation, but show warning
   if course size exceeds available license
 - enforce encoded password in join links
 - import webinars by Zoom ID
-# Version 1.3.1
-## 2020-05-07
+# 2020-05-07 Version 1.3.1
 - show actions in "my meetings" only for hosts and alternative hosts
 - rename controllers to avoid conflicts with other meeting plugins
 - do not import personal meeting rooms
 - provide option to delete a meeting only in Stud.IP, but not in Zoom
 - allow importing a meeting only for hosts and alternative hosts
-# Version 1.2.1
-## 2020-04-28
+# 2020-04-28 Version 1.2.1
 - show correct start time for irregular meetings
-# Version 1.2
-## 2020-04-27
+# 2020-04-27 Version 1.2
 - my meetings list
-# Version 1.1
-## 2020-04-24
+# 2020-04-24 Version 1.1
 - add icon
-# Version 1.0
-## 2020-04-21
+# 2020-04-21 Version 1.0
 - show message for Webinar necessity if more than 300 participants
-# Version 0.5
-## 2020-04-15
+# 2020-04-15 Version 0.5
 - initial commit
