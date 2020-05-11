@@ -16,6 +16,23 @@
             </div>
         </section>
     </fieldset>
+    <fieldset>
+        <legend>
+            <?php echo dgettext('zoom', 'Das zu importierende Element ist ein...') ?>
+        </legend>
+        <section class="col-3">
+            <input type="radio" name="webinar" id="webinar-no" value="0" checked>
+            <label for="webinar-no" class="undecorated">
+                <?php echo dgettext('zoom', 'Meeting') ?>
+            </label>
+        </section>
+        <section class="col-3">
+            <input type="radio" name="webinar" id="webinar-yes" value="1">
+            <label for="webinar-yes" class="undecorated">
+                <?php echo dgettext('zoom', 'Webinar') ?>
+            </label>
+        </section>
+    </fieldset>
     <footer data-dialog-button>
         <?= CSRFProtection::tokenTag() ?>
         <?= Studip\Button::createAccept(_('Speichern'), 'store') ?>
