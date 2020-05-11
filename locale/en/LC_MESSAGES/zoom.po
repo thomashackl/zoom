@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-07 18:05+0200\n"
-"PO-Revision-Date: 2020-05-07 17:35+0200\n"
+"POT-Creation-Date: 2020-05-11 08:14+0200\n"
+"PO-Revision-Date: 2020-05-11 08:14+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.3.1\n"
 
 #: models/ZoomAPI.php:413
 msgid "Montag"
@@ -155,39 +155,39 @@ msgstr "Unable to delete the meeting from Stud.IP."
 msgid "Das Meeting konnte nicht in Zoom gelöscht werden."
 msgstr "Unable to delete the meeting from Zoom."
 
-#: controllers/zoom_meetings.php:480
+#: controllers/zoom_meetings.php:481
 msgid "Es wurde keine ID angegeben."
 msgstr "No ID has been entered."
 
-#: controllers/zoom_meetings.php:490
+#: controllers/zoom_meetings.php:494
 msgid ""
 "Das Meeting mit der angegebenen ID ist bereits einer Stud.IP-Veranstaltung "
 "zugeordnet."
 msgstr ""
 "The meeting with the provided ID is already connected to a Stud.IP course."
 
-#: controllers/zoom_meetings.php:498
+#: controllers/zoom_meetings.php:505
 msgid ""
 "Das Meeting mit der angegebenen ID konnte nicht in Zoom gefunden werden."
 msgstr "No meeting with the provided ID was found in Zoom."
 
-#: controllers/zoom_meetings.php:504
+#: controllers/zoom_meetings.php:511
 msgid "Die Daten des Meetings konnten nicht aus Zoom ausgelesen werden."
 msgstr "Unable to read the meeting data from Zoom."
 
-#: controllers/zoom_meetings.php:526
+#: controllers/zoom_meetings.php:537
 msgid "Persönliche Meetingräume können nicht importiert werden."
 msgstr "Personal meeting rooms cannot be imported."
 
-#: controllers/zoom_meetings.php:548
+#: controllers/zoom_meetings.php:562
 msgid "Das Meeting wurde erfolgreich importiert."
 msgstr "The meeting has been successfully imported."
 
-#: controllers/zoom_meetings.php:551
+#: controllers/zoom_meetings.php:565
 msgid "Das Meeting konnte nicht importiert werden."
 msgstr "Unable to import the meeting from Zoom."
 
-#: controllers/zoom_meetings.php:555
+#: controllers/zoom_meetings.php:571
 msgid ""
 "Sie dürfen nur Meetings importieren, deren Host oder alternativer Host Sie "
 "sind."
@@ -230,11 +230,23 @@ msgstr ""
 "specifying the Zoom meeting ID.<br>You can find this ID in the list of your "
 "meetings in Zoom."
 
-#: views/zoom_meetings/import.php:21 views/zoom_meetings/edit.php:175
+#: views/zoom_meetings/import.php:21
+msgid "Das zu importierende Element ist ein..."
+msgstr "The element to import is a..."
+
+#: views/zoom_meetings/import.php:26 views/my_zoom_meetings/index.php:17
+msgid "Meeting"
+msgstr "Meeting"
+
+#: views/zoom_meetings/import.php:32
+msgid "Webinar"
+msgstr "Webinar"
+
+#: views/zoom_meetings/import.php:38 views/zoom_meetings/edit.php:175
 msgid "Speichern"
 msgstr "Save"
 
-#: views/zoom_meetings/import.php:22 views/zoom_meetings/ask_delete.php:15
+#: views/zoom_meetings/import.php:39 views/zoom_meetings/ask_delete.php:15
 #: views/zoom_meetings/edit.php:176
 msgid "Abbrechen"
 msgstr "Cancel"
@@ -401,10 +413,6 @@ msgstr "No meetings were found for your courses."
 #: views/my_zoom_meetings/index.php:16
 msgid "Veranstaltung"
 msgstr "Course"
-
-#: views/my_zoom_meetings/index.php:17
-msgid "Meeting"
-msgstr "Meeting"
 
 #: views/my_zoom_meetings/index.php:24
 msgid "Zur Veranstaltung"
