@@ -69,38 +69,15 @@ class ZoomMeetingsController extends AuthenticatedController {
                         'Danach können Sie hier Meetings anlegen.'),
                     Config::get()->ZOOM_LOGIN_URL));
             } else {
-                $this->turnout = CourseMember::countBySQL(
-                    "`Seminar_id` = :id AND `status` in ('user', 'autor')",
-                    ['id' => $this->course->id]
-                );
-
-                $mayCreate = true;
-                if ($this->turnout > ZoomAPI::MAX_MEETING_MEMBERS) {
-                    $settings = ZoomAPI::getUserSettings();
-
-                    if (!$settings->feature->webinar) {
-                        $mayCreate = false;
-
-                        $this->need_license = true;
-                    } else if ($settings->feature->webinar_capacity < $this->turnout) {
-                        $mayCreate = false;
-
-                        $this->max_turnout = $settings->feature->webinar_capacity;
-                        $this->need_larger_license = true;
-                    }
-                }
-
-                if ($mayCreate) {
-                    $sidebar = Sidebar::get();
-                    $actions = new ActionsWidget();
-                    $actions->addLink(dgettext('zoom', 'Meeting erstellen'),
-                        $this->link_for('zoom_meetings/edit'),
-                        Icon::create('add'))->asDialog('size="auto"');
-                    $actions->addLink(dgettext('zoom', 'Meeting aus Zoom importieren'),
-                        $this->link_for('zoom_meetings/import'),
-                        Icon::create('install'))->asDialog('size="auto"');
-                    $sidebar->addWidget($actions);
-                }
+                $sidebar = Sidebar::get();
+                $actions = new ActionsWidget();
+                $actions->addLink(dgettext('zoom', 'Meeting erstellen'),
+                    $this->link_for('zoom_meetings/edit'),
+                    Icon::create('add'))->asDialog('size="auto"');
+                $actions->addLink(dgettext('zoom', 'Meeting aus Zoom importieren'),
+                    $this->link_for('zoom_meetings/import'),
+                    Icon::create('install'))->asDialog('size="auto"');
+                $sidebar->addWidget($actions);
             }
         }
 
@@ -163,6 +140,11 @@ class ZoomMeetingsController extends AuthenticatedController {
             ['id' => $this->course->id]
         );
 
+        $this->turnout = CourseMember::countBySQL(
+            "`Seminar_id` = :id AND `status` in ('user', 'autor')",
+            ['id' => $this->course->id]
+        );
+
         // Edit an existing meeting.
         if ($id != 0) {
             $this->meeting = ZoomMeeting::find($id);
@@ -196,8 +178,23 @@ class ZoomMeetingsController extends AuthenticatedController {
 
             // mode 'coursedates' can only be set if the current course has dates.
             $this->meeting->type = $this->dateCount > 0 ? 'coursedates' : 'manual';
-            // Check for turnout.
-            $this->meeting->webinar = $this->turnout <= ZoomAPI::MAX_MEETING_MEMBERS ? 0 : 1;
+
+            // Check for turnout and available options.
+            $mayCreate = true;
+            if ($this->turnout > ZoomAPI::MAX_MEETING_MEMBERS) {
+                $settings = ZoomAPI::getUserSettings();
+
+                if (!$settings->feature->webinar) {
+                    $mayCreate = false;
+                    $this->max_turnout = ZoomAPI::MAX_MEETING_MEMBERS;
+                    $this->need_license = true;
+                } else if ($settings->feature->webinar_capacity < $this->turnout) {
+                    $this->max_turnout = $settings->feature->webinar_capacity;
+                    $this->need_larger_license = true;
+                }
+            }
+
+            $this->meeting->webinar = ($this->turnout > ZoomAPI::MAX_MEETING_MEMBERS && $mayCreate) ? 1 : 0;
 
             // Set meeting start to next hour per default.
             $nextHour = new DateTime('now +1 hour', new DateTimeZone(ZoomAPI::LOCAL_TIMEZONE));
@@ -250,25 +247,19 @@ class ZoomMeetingsController extends AuthenticatedController {
                 ['id' => $this->course->id]
             );
 
-            $settings = ZoomAPI::getUserSettings();
-
             $meeting = new ZoomMeeting();
             $meeting->user_id = User::findCurrent()->id;
             $meeting->course_id = $this->course->id;
             $meeting->mkdate = date('Y-m-d H:i:s');
 
+            // Check for turnout and available options.
+            $meeting->webinar = 0;
             if ($turnout > ZoomAPI::MAX_MEETING_MEMBERS) {
-                if ($settings->feature->webinar && $settings->feature->webinar_capacity >= $turnout) {
+                $settings = ZoomAPI::getUserSettings();
+
+                if ($settings->feature->webinar) {
                     $meeting->webinar = 1;
-                } else {
-                    throw new AccessDeniedException(sprintf(dgettext('zoom',
-                        'Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit regulären ' .
-                        'Zoom-Meetings abgedeckt werden kann. Um eine Freischaltung zur Erstellung größerer '.
-                        'Webinare zu bekommen, wenden Sie sich bitte an <a href="mailto:%2$s">%2$s</a>.'),
-                        ZoomAPI::MAX_MEETING_MEMBERS, $GLOBALS['UNI_CONTACT']));
                 }
-            } else {
-                $meeting->webinar = 0;
             }
         }
 
