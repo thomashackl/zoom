@@ -106,7 +106,7 @@ class ZoomMeetingDateCronjob extends CronJob {
                         $newSettings->start_time =
                             $startTime->format('Y-m-d') . 'T' . $startTime->format('H:i:s');
                         $newSettings->duration = $duration;
-                        $result = ZoomAPI::updateMeeting($m->zoom_meeting_id, $newSettings);
+                        $result = ZoomAPI::updateMeeting($m->zoom_settings->host_id, $m->zoom_meeting_id, $newSettings);
 
                         if ($result !== null && $result !== 404) {
                             if ($parameters['verbose']) {

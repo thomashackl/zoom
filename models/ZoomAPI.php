@@ -158,6 +158,17 @@ class ZoomAPI {
     }
 
     /**
+     * @param string $userId the user's email address which is used as ID
+     * @param array $settings
+     * @param string|null $option empty, or 'meeting_authentication' or 'recording_authentication'
+     */
+    public static function setUserSettings($userId, $settings, $option = null)
+    {
+        return self::_call('users/' . $userId . '/settings',
+            $option !== null ? ['option' => $option] : [], $settings, 'PATCH');
+    }
+
+    /**
      * Get all meetings for the given user.
      *
      * @param string|null $userId the user to check. Defaults to the current user.
@@ -220,6 +231,9 @@ class ZoomAPI {
      */
     public static function createMeeting($userId, $settings, $isWebinar = false)
     {
+        // Ensure that password will be encoded in join link.
+        self::forcePasswordInJoinLink($userId);
+
         $result = self::_call('users/' . $userId . ($isWebinar ? '/webinars' : '/meetings'),
             [], $settings, 'POST');
 
@@ -240,14 +254,18 @@ class ZoomAPI {
     /**
      * Updates the given meeting with the given settings.
      *
-     * @param $meetingId
-     * @param $settings
+     * @param string $userId Zoom User ID, either email adress or real Zoom ID
+     * @param int $meetingId
+     * @param array $settings
      * @param bool $isWebinar is this a regular meeting or a Webinar?
      *
      * @return object|int|null A meeting object, '404' as 'not found' or null if another error occurred.
      */
-    public static function updateMeeting($meetingId, $settings, $isWebinar = false)
+    public static function updateMeeting($userId, $meetingId, $settings, $isWebinar = false)
     {
+        // Ensure that password will be encoded in join link.
+        $forced = self::forcePasswordInJoinLink($userId);
+
         $result = self::_call(($isWebinar ? 'webinars/' : 'meetings/') . $meetingId,
             [], $settings, 'PATCH');
 
@@ -333,6 +351,22 @@ class ZoomAPI {
         }
 
         return $response;
+    }
+
+    /**
+     * Forces the user setting that passwords are encoded in meeting join links
+     *
+     * @param string userId user's email which is used as ID here
+     */
+    public static function forcePasswordInJoinLink($userId)
+    {
+        return self::setUserSettings($userId,
+            [
+                'schedule_meeting' => [
+                    'embed_password_in_join_link' => true
+                ]
+            ]
+        );
     }
 
     /**
