@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-11 08:14+0200\n"
-"PO-Revision-Date: 2020-05-11 08:14+0200\n"
+"POT-Creation-Date: 2020-05-11 11:29+0200\n"
+"PO-Revision-Date: 2020-05-11 11:30+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -17,55 +17,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.3.1\n"
 
-#: models/ZoomAPI.php:413
+#: models/ZoomAPI.php:447
 msgid "Montag"
 msgstr "Monday"
 
-#: models/ZoomAPI.php:418
+#: models/ZoomAPI.php:452
 msgid "Dienstag"
 msgstr "Tuesday"
 
-#: models/ZoomAPI.php:423
+#: models/ZoomAPI.php:457
 msgid "Mittwoch"
 msgstr "Wednesday"
 
-#: models/ZoomAPI.php:428
+#: models/ZoomAPI.php:462
 msgid "Donnerstag"
 msgstr "Thursday"
 
-#: models/ZoomAPI.php:433
+#: models/ZoomAPI.php:467
 msgid "Freitag"
 msgstr "Friday"
 
-#: models/ZoomAPI.php:438
+#: models/ZoomAPI.php:472
 msgid "Samstag"
 msgstr "Saturday"
 
-#: models/ZoomAPI.php:443
+#: models/ZoomAPI.php:477
 msgid "Sonntag"
 msgstr "Sunday"
 
-#: models/ZoomAPI.php:463 models/ZoomAPI.php:495
+#: models/ZoomAPI.php:497 models/ZoomAPI.php:529
 msgid "Video starten, wenn ein Host den Raum betritt"
 msgstr "Start video when a host enters the room"
 
-#: models/ZoomAPI.php:468 models/ZoomAPI.php:500
+#: models/ZoomAPI.php:502 models/ZoomAPI.php:534
 msgid "Video starten, wenn ein(e) Teilnehmer(in) den Raum betritt"
 msgstr "Start video when a participant enters the room"
 
-#: models/ZoomAPI.php:473
+#: models/ZoomAPI.php:507
 msgid "Teilnehmende dürfen den Raum vor dem Host betreten"
 msgstr "Participants may enter the room before the host"
 
-#: models/ZoomAPI.php:478
+#: models/ZoomAPI.php:512
 msgid "Teilnehmende beim Betreten automatisch stumm schalten"
 msgstr "Automatically mute participants on entry"
 
-#: models/ZoomAPI.php:483
+#: models/ZoomAPI.php:517
 msgid "Warteraum aktivieren"
 msgstr "Enable waiting room"
 
-#: models/ZoomAPI.php:488 models/ZoomAPI.php:505
+#: models/ZoomAPI.php:522 models/ZoomAPI.php:539
 msgid "Nur angemeldete Nutzer dürfen teilnehmen (keine Gäste)"
 msgstr "Only registered participants may join (no guests)"
 
@@ -85,23 +85,23 @@ msgstr ""
 "log in via <a href=\"%1$s\" target=\"_blank\">%1$s</a> to create your Zoom "
 "account. Once you have done this you can set up a meeting."
 
-#: controllers/zoom_meetings.php:96
+#: controllers/zoom_meetings.php:74
 msgid "Meeting erstellen"
 msgstr "Create a meeting"
 
-#: controllers/zoom_meetings.php:99
+#: controllers/zoom_meetings.php:77
 msgid "Meeting aus Zoom importieren"
 msgstr "Import a meeting from Zoom"
 
-#: controllers/zoom_meetings.php:124
+#: controllers/zoom_meetings.php:101
 msgid "Zoom-Meeting anlegen"
 msgstr "Create a Zoom meeting"
 
-#: controllers/zoom_meetings.php:125
+#: controllers/zoom_meetings.php:102
 msgid "Zoom-Meeting bearbeiten"
 msgstr "Edit a Zoom meeting"
 
-#: controllers/zoom_meetings.php:183
+#: controllers/zoom_meetings.php:165
 msgid ""
 "Das Meeting ist nicht mehr in Zoom vorhanden und wurde daher auch in Stud.IP "
 "gelöscht."
@@ -109,85 +109,73 @@ msgstr ""
 "The meeting was not found in Zoom and was therefore automatically deleted in "
 "Stud.IP."
 
-#: controllers/zoom_meetings.php:187
+#: controllers/zoom_meetings.php:169
 msgid ""
 "Das Meeting ist nicht mehr in Zoom vorhanden, konnte aber nicht automatisch "
 "in Stud.IP gelöscht werden."
 msgstr ""
 "The meeting was not found in Zoom but automatic deletion in Stud.IP failed."
 
-#: controllers/zoom_meetings.php:265 views/zoom_meetings/index.php:3
-#, php-format
-msgid ""
-"Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit "
-"regulären Zoom-Meetings abgedeckt werden kann. Um eine Freischaltung zur "
-"Erstellung größerer Webinare zu bekommen, wenden Sie sich bitte an <a href="
-"\"mailto:%2$s\">%2$s</a>."
-msgstr ""
-"Your class has more than %1$u participants, which exceeds the number that "
-"can be handled by standard Zoom meetings. Please contact <a href=\"mailto:"
-"%2$s\">%2$s</a> to obtain a license for larger webinars."
-
-#: controllers/zoom_meetings.php:385
+#: controllers/zoom_meetings.php:377
 msgid "Das Meeting wurde gespeichert."
 msgstr "The meeting has been saved."
 
-#: controllers/zoom_meetings.php:387
+#: controllers/zoom_meetings.php:379
 msgid "Das Meeting kann nicht gespeichert werden."
 msgstr "Unable to save the meeting."
 
-#: controllers/zoom_meetings.php:393
+#: controllers/zoom_meetings.php:385
 msgid ""
 "Das Meeting kann nicht gespeichert werden, da die Daten nicht an Zoom "
 "übertragen werden konnten."
 msgstr ""
 "Unable to save the meeting because the data transfer to Zoom has failed."
 
-#: controllers/zoom_meetings.php:439
+#: controllers/zoom_meetings.php:431
 msgid "Das Meeting wurde gelöscht."
 msgstr "The meeting has been deleted."
 
-#: controllers/zoom_meetings.php:441
+#: controllers/zoom_meetings.php:433
 msgid "Das Meeting konnte nicht aus Stud.IP gelöscht werden."
 msgstr "Unable to delete the meeting from Stud.IP."
 
-#: controllers/zoom_meetings.php:445
+#: controllers/zoom_meetings.php:437
 msgid "Das Meeting konnte nicht in Zoom gelöscht werden."
 msgstr "Unable to delete the meeting from Zoom."
 
-#: controllers/zoom_meetings.php:481
+#: controllers/zoom_meetings.php:473
 msgid "Es wurde keine ID angegeben."
 msgstr "No ID has been entered."
 
-#: controllers/zoom_meetings.php:494
+#: controllers/zoom_meetings.php:486
 msgid ""
 "Das Meeting mit der angegebenen ID ist bereits einer Stud.IP-Veranstaltung "
 "zugeordnet."
 msgstr ""
 "The meeting with the provided ID is already connected to a Stud.IP course."
 
-#: controllers/zoom_meetings.php:505
+#: controllers/zoom_meetings.php:497
 msgid ""
 "Das Meeting mit der angegebenen ID konnte nicht in Zoom gefunden werden."
 msgstr "No meeting with the provided ID was found in Zoom."
 
-#: controllers/zoom_meetings.php:511
+#: controllers/zoom_meetings.php:503
 msgid "Die Daten des Meetings konnten nicht aus Zoom ausgelesen werden."
 msgstr "Unable to read the meeting data from Zoom."
 
-#: controllers/zoom_meetings.php:537
+#: controllers/zoom_meetings.php:529
 msgid "Persönliche Meetingräume können nicht importiert werden."
 msgstr "Personal meeting rooms cannot be imported."
 
-#: controllers/zoom_meetings.php:562
+#: controllers/zoom_meetings.php:554
 msgid "Das Meeting wurde erfolgreich importiert."
 msgstr "The meeting has been successfully imported."
 
-#: controllers/zoom_meetings.php:565
+#: controllers/zoom_meetings.php:557
 msgid "Das Meeting konnte nicht importiert werden."
 msgstr "Unable to import the meeting from Zoom."
 
-#: controllers/zoom_meetings.php:571
+#: controllers/zoom_meetings.php:563
 msgid ""
 "Sie dürfen nur Meetings importieren, deren Host oder alternativer Host Sie "
 "sind."
@@ -242,50 +230,38 @@ msgstr "Meeting"
 msgid "Webinar"
 msgstr "Webinar"
 
-#: views/zoom_meetings/import.php:38 views/zoom_meetings/edit.php:175
+#: views/zoom_meetings/import.php:38 views/zoom_meetings/edit.php:195
 msgid "Speichern"
 msgstr "Save"
 
 #: views/zoom_meetings/import.php:39 views/zoom_meetings/ask_delete.php:15
-#: views/zoom_meetings/edit.php:176
+#: views/zoom_meetings/edit.php:196
 msgid "Abbrechen"
 msgstr "Cancel"
 
-#: views/zoom_meetings/index.php:10
-#, php-format
-msgid ""
-"Ihre Veranstaltung hat %1$u Teilnehmende, was nicht mit Ihrer "
-"freigeschalteten Webinarlizenz (bis %2$u Personen) abgedeckt werden kann. Um "
-"eine Freischaltung zur Erstellung größerer Webinare zu bekommen, wenden Sie "
-"sich bitte an <a href=\"mailto:%3$s\">%3$s</a>."
-msgstr ""
-"Your class has %1$u participants, which exceeds the number permitted under "
-"your webinar licence (up to %2$u people). Please contact <a href=\"mailto:"
-"%3$s\">%3$s</a> to obtain a license for larger webinars."
-
-#: views/zoom_meetings/index.php:17
+#: views/zoom_meetings/index.php:3
 msgid "Es wurden keine Zoom-Meetings für diese Veranstaltung gefunden."
 msgstr "No Zoom meetings were found for this course."
 
-#: views/zoom_meetings/index.php:21
+#: views/zoom_meetings/index.php:7
 #, php-format
 msgid "Zoom-Meetings zu dieser Veranstaltung"
 msgstr "Zoom meetings for this course"
 
-#: views/zoom_meetings/index.php:32 views/zoom_meetings/edit.php:55
+#: views/zoom_meetings/index.php:18 views/zoom_meetings/edit.php:75
 msgid "Titel"
 msgstr "Title"
 
-#: views/zoom_meetings/index.php:36 views/my_zoom_meetings/index.php:18
+#: views/zoom_meetings/index.php:22 views/my_zoom_meetings/index.php:18
 msgid "Aktionen"
 msgstr "Actions"
 
-#: views/zoom_meetings/index.php:47 views/my_zoom_meetings/index.php:31
+#: views/zoom_meetings/index.php:33 views/my_zoom_meetings/index.php:31
 #, php-format
 msgid "Nächster Termin: %s"
 msgstr "Next date: %s"
 
-#: views/zoom_meetings/index.php:52 views/my_zoom_meetings/index.php:36
+#: views/zoom_meetings/index.php:38 views/my_zoom_meetings/index.php:36
 #: views/my_zoom_meetings/index.php:38
 msgid "Teilnehmen"
 msgstr "Join"
@@ -302,15 +278,44 @@ msgstr "Delete meeting only in Stud.IP, not in Zoom"
 msgid "Löschen"
 msgstr "Delete"
 
-#: views/zoom_meetings/edit.php:4
+#: views/zoom_meetings/edit.php:3
+#, php-format
+msgid ""
+"Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit "
+"regulären Zoom-Meetings abgedeckt is. Sie können ein Meeting anlegen, es "
+"werden aber nicht alle Teilnehmenden Ihrer Veranstaltung gleichzeitig daran "
+"teilnehmen können.<br>Um eine Freischaltung zur Erstellung größerer Webinare "
+"zu bekommen, wenden Sie sich bitte an <a href=\"mailto:%2$s\">%2$s</a>."
+msgstr ""
+"Your class has more than %1$u participants, which exceeds the number that "
+"can be handled by standard Zoom meetings. You can create a meeting, but not "
+"all participants will be able to join concurrently.<br>Please contact <a "
+"href=\"mailto:%2$s\">%2$s</a> to obtain a license for larger webinars."
+
+#: views/zoom_meetings/edit.php:13
+#, php-format
+msgid ""
+"Ihre Veranstaltung hat %1$u Teilnehmende, was nicht mit Ihrer "
+"freigeschalteten Webinarlizenz (bis %2$u Personen) abgedeckt is. Sie können "
+"ein Webinar anlegen, es werden aber nicht alle Teilnehmenden Ihrer "
+"Veranstaltung gleichzeitig daran teilnehmen können.<br>Um eine Freischaltung "
+"zur Erstellung größerer Webinare zu bekommen, wenden Sie sich bitte an <a "
+"href=\"mailto:%3$s\">%3$s</a>."
+msgstr ""
+"Your class has %1$u participants, which exceeds the number permitted under "
+"your webinar licence (up to %2$u people). You can create a webinar, but not "
+"all participants will be able to join concurrently.<br>Please contact <a "
+"href=\"mailto:%3$s\">%3$s</a> to obtain a license for larger webinars."
+
+#: views/zoom_meetings/edit.php:24
 msgid "Wie soll das Meeting angelegt werden?"
 msgstr "Please choose how you wish to set up the meeting."
 
-#: views/zoom_meetings/edit.php:14
+#: views/zoom_meetings/edit.php:34
 msgid "Meeting mit Veranstaltungsterminen verknüpfen"
 msgstr "Connect meeting with course dates"
 
-#: views/zoom_meetings/edit.php:21
+#: views/zoom_meetings/edit.php:41
 msgid ""
 "Das angelegte Meeting wird automatisch seine Zeiten aktualisieren und immer "
 "den nächsten verfügbaren Veranstaltungstermin als Zeit gesetzt haben."
@@ -318,7 +323,7 @@ msgstr ""
 "The meeting date will be automatically updated to the next available course "
 "date."
 
-#: views/zoom_meetings/edit.php:26
+#: views/zoom_meetings/edit.php:46
 msgid ""
 "Da diese Veranstaltung keine zukünftigen Termine hat, kann auch kein Meeting "
 "angelegt werden, das mit Terminen verknüpft ist."
@@ -326,7 +331,7 @@ msgstr ""
 "You cannot create a meeting connected to course dates, as this course does "
 "not have any future dates."
 
-#: views/zoom_meetings/edit.php:30
+#: views/zoom_meetings/edit.php:50
 msgid ""
 "Das angelegte Meeting ist mit den Terminen dieser Veranstaltung verknüpft, "
 "allerdings gibt es keine zukünftigen Termine."
@@ -334,11 +339,11 @@ msgstr ""
 "The meeting you have created is connected to the course dates, but there are "
 "no future dates for the course."
 
-#: views/zoom_meetings/edit.php:40
+#: views/zoom_meetings/edit.php:60
 msgid "Meeting mit manuellem Termin"
 msgstr "Manually set a meeting date and time"
 
-#: views/zoom_meetings/edit.php:43
+#: views/zoom_meetings/edit.php:63
 msgid ""
 "Die Zeit, zu der das Meeting stattfindet, kann hier angegeben werden und "
 "bleibt unverändlich, außer, sie wird manuell bearbeitet. Es kann auch ein "
@@ -348,47 +353,47 @@ msgstr ""
 "these meeting dates will not be updated automatically. You can also set the "
 "date to repeat on a weekly basis on various weekdays."
 
-#: views/zoom_meetings/edit.php:51
+#: views/zoom_meetings/edit.php:71
 msgid "Grunddaten"
 msgstr "Basic data"
 
-#: views/zoom_meetings/edit.php:62
+#: views/zoom_meetings/edit.php:82
 msgid "Beschreibung"
 msgstr "Description"
 
-#: views/zoom_meetings/edit.php:69
+#: views/zoom_meetings/edit.php:89
 msgid "Passwort"
 msgstr "Password"
 
-#: views/zoom_meetings/edit.php:78
+#: views/zoom_meetings/edit.php:98
 msgid "Wann findet das Meeting statt?"
 msgstr "When will the meeting take place?"
 
-#: views/zoom_meetings/edit.php:82
+#: views/zoom_meetings/edit.php:102
 msgid "Beginn"
 msgstr "Start"
 
-#: views/zoom_meetings/edit.php:89
+#: views/zoom_meetings/edit.php:109
 msgid "Dauer (in Minuten)"
 msgstr "Duration (in minutes)"
 
-#: views/zoom_meetings/edit.php:97
+#: views/zoom_meetings/edit.php:117
 msgid "Findet das Meeting wiederholt statt?"
 msgstr "Will there be repeat dates for this meeting?"
 
-#: views/zoom_meetings/edit.php:104
+#: views/zoom_meetings/edit.php:124
 msgid "Keine Wiederholung"
 msgstr "No repetition"
 
-#: views/zoom_meetings/edit.php:112
+#: views/zoom_meetings/edit.php:132
 msgid "Wöchentlich (bis Semesterende)"
 msgstr "Weekly repetition (until the end of the semester)"
 
-#: views/zoom_meetings/edit.php:121
+#: views/zoom_meetings/edit.php:141
 msgid "Weitere Personen mit Vollzugriff auf dieses Meeting (Co-Hosts)"
 msgstr "Other persons with full access to meeting settings (co-hosts)"
 
-#: views/zoom_meetings/edit.php:145
+#: views/zoom_meetings/edit.php:165
 #, php-format
 msgid ""
 "Für eine(n) oder mehrere Lehrende dieser Veranstaltung existiert noch keine "
@@ -402,7 +407,7 @@ msgstr ""
 "<a href=\"%1$s\" target=\"_blank\">%1$s</a>, which will create their Zoom "
 "account. You will be able to add them as co-hosts once this has been done."
 
-#: views/zoom_meetings/edit.php:157
+#: views/zoom_meetings/edit.php:177
 msgid "Zoom-Einstellungen"
 msgstr "Zoom settings"
 

@@ -1,3 +1,23 @@
+<?php if ($need_license) : ?>
+    <?php echo MessageBox::warning(sprintf(dgettext('zoom',
+        'Ihre Veranstaltung hat mehr als %1$u Teilnehmende, was nicht mehr mit regulären ' .
+        'Zoom-Meetings abgedeckt is. Sie können ein Meeting anlegen, es werden aber ' .
+        'nicht alle Teilnehmenden Ihrer Veranstaltung gleichzeitig daran teilnehmen können.' .
+        '<br>' .
+        'Um eine Freischaltung zur Erstellung größerer Webinare zu bekommen, ' .
+        'wenden Sie sich bitte an <a href="mailto:%2$s">%2$s</a>.'),
+        ZoomAPI::MAX_MEETING_MEMBERS, $GLOBALS['UNI_CONTACT'])) ?>
+<?php endif ?>
+<?php if ($need_larger_license) : ?>
+    <?php echo MessageBox::warning(sprintf(dgettext('zoom',
+        'Ihre Veranstaltung hat %1$u Teilnehmende, was nicht mit Ihrer freigeschalteten Webinarlizenz ' .
+        '(bis %2$u Personen) abgedeckt is. Sie können ein Webinar anlegen, es werden aber nicht alle ' .
+        'Teilnehmenden Ihrer Veranstaltung gleichzeitig daran teilnehmen können.' .
+        '<br>' .
+        'Um eine Freischaltung zur Erstellung größerer Webinare zu ' .
+        'bekommen, wenden Sie sich bitte an <a href="mailto:%3$s">%3$s</a>.'),
+        $turnout, $max_turnout, $GLOBALS['UNI_CONTACT'])) ?>
+<?php endif ?>
 <form class="default" action="<?php echo $controller->link_for('zoom_meetings/store') ?>" method="post">
     <fieldset>
         <legend>
