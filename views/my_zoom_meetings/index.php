@@ -28,8 +28,9 @@
                 <td>
                     <?php echo htmlReady($m->zoom_settings->topic) ?>
                     <br>
-                    <?php echo sprintf(dgettext('zoom', 'Nächster Termin: %s'),
-                        htmlReady($m->zoom_settings->start_time->format('d.m.Y H:i'))) ?>
+                    <?php echo $m->zoom_settings->start_time ?
+                        sprintf(dgettext('zoom', 'Nächster Termin: %s'),
+                            htmlReady($m->zoom_settings->start_time->format('d.m.Y H:i'))) : '' ?>
                 </td>
                 <td class="join-meeting">
                     <a href="<?php echo $controller->link_for('zoom_meetings/join/' . $m->id . '?cid=' . $m->course_id) ?>"
