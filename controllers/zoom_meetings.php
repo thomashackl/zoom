@@ -535,7 +535,7 @@ class ZoomMeetingsController extends AuthenticatedController {
 
                     // Is the current user host or alternative host?
                     $isHost = ($me->id == $data->host_id ||
-                        in_array($GLOBALS['user']->email, explode(',', $alternative)));
+                        in_array(strtolower($GLOBALS['user']->email), explode(',', strtolower($alternative))));
 
                     if ($isHost) {
 
