@@ -148,7 +148,7 @@
                                    value="<?php echo htmlReady($lecturer->user_id) ?>"
                                 <?php echo $possibleCoHosts[$lecturer->user_id] ? (
                                         in_array($lecturer->user->email,
-                                            explode(',', $meeting->zoom_settings->settings->alternative_hosts)) ?
+                                            explode(';', $meeting->zoom_settings->settings->alternative_hosts)) ?
                                             ' checked' : '') :
                                     ' disabled' ?>>
                             <label for="co-host-<?php echo $lecturer->user_id ?>" class="undecorated">

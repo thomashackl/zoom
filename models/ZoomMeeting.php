@@ -65,7 +65,7 @@ class ZoomMeeting extends SimpleORMap
         $alternative = $this->zoom_settings->settings->alternative_hosts ?: '';
 
         return ($zoomUser->id == $this->zoom_settings->host_id ||
-            in_array($user->email, explode(',', $alternative)));
+            in_array($user->email, explode(';', $alternative)));
     }
 
     public function getZoom_Settings()
